@@ -2,10 +2,10 @@
 
 This library contains graph datastructures and algorithms.
 
-[Getting started](# Getting started)
-[What is a graph?](# What is a graph?)
-[API](# API)
-[History and inspiration](#History and inspiration)
+[Getting started](#getting-started)
+[What is a graph?](#what-is-a-graph)
+[API](#api)
+[History and inspiration](#history-and-inspiration)
 
 # Getting started
 
@@ -26,7 +26,7 @@ Create and manipulate graphs like this:
 
 # What is a graph?
 
-A graph is a datastructure that represents links between nodes. In [graph theory](https://en.wikipedia.org/wiki/Graph_theory) these nodes are called [verticies](### Vertex) and the links between them are called [edges](### Edge). 
+A graph is a datastructure that represents links between nodes. In [graph theory](https://en.wikipedia.org/wiki/Graph_theory) these nodes are called [verticies](#vertex) and the links between them are called [edges](#edge). 
 
 ## Defining terms
 
@@ -42,7 +42,7 @@ A link between two vertices. Edges may be directed or undirected. Also called ar
 
 ### Parallel Edges
 
-If a graph allows more than one edge between the same pair of vertices, it is a [multi-graph](### Multi-graph)
+If a graph allows more than one edge between the same pair of vertices, it is a [multi-graph](#multi-graph)
 
 ### Multi-graph
 
@@ -54,7 +54,7 @@ A graph where each edge has a direction. That is an edge from A to B is not the 
 
 ### Directed Acyclic Graph
 
-A directed acyclic graph (DAG) is a [Directed Graph](### Directed Graph) where no edges form any cycles or loops.
+A directed acyclic graph (DAG) is a [Directed Graph](#directed-graph) where no edges form any cycles or loops.
 
 ### Strongly connected
 
