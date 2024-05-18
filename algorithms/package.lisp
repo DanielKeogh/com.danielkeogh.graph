@@ -7,7 +7,15 @@
    (#:edge #:com.danielkeogh.graph.edge)
    (#:graph #:com.danielkeogh.graph))
   (:export
-   #:depth-first-search
+   ;; search
+   #:bidirectional-breadth-first-search
    #:breadth-first-search
-   #:minimum-spanning-tree
-   #:bidirectional-breadth-first-search))
+   #:depth-first-search
+   ;; connected components
+   #:strongly-connected-components
+   #:strongly-connected-components->graphs
+   ;; condensation
+   #:condensate-vertices
+   #:condensate-strongly-connected-vertices
+   ;; ??
+   #:minimum-spanning-tree))

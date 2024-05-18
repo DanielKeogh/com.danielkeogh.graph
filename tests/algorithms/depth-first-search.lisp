@@ -40,8 +40,8 @@
     (labels ((print-visited-vertex (stream)
                (lambda (vertex) (format stream "~A " vertex))))
       (utils:let-with-string-streams (vertex-finished discover-vertex back-edge forward-or-cross-edge)
-          (alg:depth-first-search
-           g :1
+          (alg:depth-first-search g
+           :root-vertex :1
            :on-vertex-finished-fn (print-visited-vertex vertex-finished) 
            :on-discover-vertex-fn (print-visited-vertex discover-vertex)
            :on-back-edge-fn (print-visited-vertex back-edge)

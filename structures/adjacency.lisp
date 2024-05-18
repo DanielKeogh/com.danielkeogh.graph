@@ -28,6 +28,8 @@
    #:edges
    #:in-edges
    #:out-edges
+   #:vertex-count
+   #:edge-count
 
    ;; accessors
    #:graph-vertex-equality-fn
@@ -178,6 +180,15 @@
                  (lambda (edge)
                    (funcall vertex-eq vertex (edge:edge-target edge)))
                  val))))
+
+(defun vertex-count (graph)
+  (declare (type adjacency-graph graph))
+  (hash-table-count (graph-vertex-edges graph)))
+
+(defun edge-count (graph)
+  (declare (type adjacency-graph graph))
+  (loop for edge-collection being the hash-values of (graph-vertex-edges graph)
+        sum (length edge-collection)))
 
 ;; looping without malloc
 

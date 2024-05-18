@@ -28,6 +28,8 @@
    #:edges
    #:out-edges
    #:in-edges
+   #:vertex-count
+   #:edge-count
 
    ;; accessors
    #:graph-vertex-equality-fn
@@ -184,6 +186,15 @@
 (defun in-edges (graph vertex)
   (declare (type bidirectional-graph graph))
   (gethash vertex (graph-vertex-in-edges graph)))
+
+(defun vertex-count (graph)
+  (declare (type bidirectional-graph graph))
+  (hash-table-count (graph-vertex-out-edges graph)))
+
+(defun edge-count (graph)
+  (declare (type bidirectional-graph graph))
+  (loop for edge-collection being the hash-values of (graph-vertex-out-edges graph)
+        sum (length edge-collection)))
 
 ;;; looping without malloc
 

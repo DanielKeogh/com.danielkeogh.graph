@@ -16,7 +16,13 @@
                  (:module "algorithms"
                   :pathname "algorithms"
                   :components ((:file "package")
-                               (:file "depth-first-search")
-                               (:file "breadth-first-search")
+                               ;; search
                                (:file "bidirectional-breadth-first-search")
+                               (:file "breadth-first-search")
+                               (:file "depth-first-search")
+                               ;; connected components
+                               (:file "strongly-connected-components")
+                               ;; condensation
+                               (:file "condensate-vertices")
+                               ;; ??
                                (:file "minimum-spanning-tree")))))))

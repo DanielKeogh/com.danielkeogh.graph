@@ -16,6 +16,7 @@
    #:add-vertex
    #:add-edge
    #:add-edges-and-vertices
+   #:add-edges-and-vertices-between
    #:add-edge-between
    #:remove-vertex
    #:remove-edge
@@ -25,6 +26,7 @@
    #:has-vertex
    #:has-edge
    #:has-edge-between
+   #:vertex-equals
    
    ;; graph accessors
    #:for-in-out-edges
@@ -38,6 +40,9 @@
    #:roots
    #:edges
 
+   #:vertex-count
+   #:edge-count
+
    #:graph-vertex-equality-fn
    
    ;; edge accessors
@@ -47,7 +52,13 @@
    ;; dynamic builders
    #:with-graph*
    #:add-edge*
-   #:add-vertex*))
+   #:add-vertex*
+   #:add-edges-and-vertices*
+   #:add-edges-and-vertices-between*
+
+   ;; utils
+   #:pretty-print
+   #:graph-equals))
 
 (in-package #:com.danielkeogh.graph)
 
@@ -90,6 +101,12 @@
 
 (defgeneric graph-vertex-equality-fn (graph)
   (:documentation "Get the function that checks if two vertices in the graph are the same"))
+
+(defgeneric vertex-count (graph)
+  (:documentation "Total count of vertexes in the graph"))
+
+(defgeneric edge-count (graph)
+  (:documentation "Total count of edges in the graph"))
 
 ;;; impl
 
@@ -145,6 +162,12 @@
 (defmethod has-edge-between ((graph adjacency:adjacency-graph) source target)
   (adjacency:has-edge-between graph source target))
 
+(defmethod vertex-count ((graph adjacency:adjacency-graph))
+  (adjacency:vertex-count graph))
+
+(defmethod edge-count ((graph adjacency:adjacency-graph))
+  (adjacency:edge-count graph))
+
 ;; bidirectional
 
 (defun make-bidirectional-graph (&key (allow-parallel-edges t) (vertex-equality-fn #'eql))
@@ -192,6 +215,12 @@
 (defmethod has-edge-between ((graph bidirectional:bidirectional-graph) source target)
   (bidirectional:has-edge-between graph source target))
 
+(defmethod vertex-count ((graph bidirectional:bidirectional-graph))
+  (bidirectional:vertex-count graph))
+
+(defmethod edge-count ((graph bidirectional:bidirectional-graph))
+  (bidirectional:edge-count graph))
+
 ;; edge accessors
 
 (defun edge-source (edge)
@@ -213,6 +242,12 @@
 
 (trivial-indent:define-indentation add-edges-and-vertices (4 &body))
 
+(defun add-edges-and-vertices-between (graph &rest pairs)
+  (loop for (source target) on pairs by #'cddr do
+    (add-vertex graph source)
+    (add-vertex graph target)
+    (add-edge-between graph source target)))
+
 (defun vertices (graph)
   "Get all verticies in the graph as a list."
   (utils:with-collector (collect)
@@ -222,7 +257,6 @@
   "Get all edges in the graph as a list."
   (utils:with-collector (collect)
     (for-edges graph #'collect)))
-
 
 (defun for-roots (graph fn)
   "Call a function on all vertices with no inbound edges."
@@ -243,6 +277,8 @@
         do (funcall fn edge)))
 (trivial-indent:define-indentation for-in-out-edges (4 4 &lambda))
 
+(defun vertex-equals (graph vertex1 vertex2)
+  (funcall (graph-vertex-equality-fn graph) vertex1 vertex2))
 
 ;;; with-graph* utils
 
@@ -250,10 +286,34 @@
 
 (defmacro with-graph* ((graph) &body body)
   `(let ((*graph* ,graph))
-     ,@body))
+     ,@body
+     *graph*))
 
 (defun add-edge* (edge)
   (add-edge *graph* edge))
 
 (defun add-vertex* (vertex)
   (add-vertex *graph* vertex))
+
+(defun add-edges-and-vertices* (&rest edges)
+  (apply #'add-edges-and-vertices (cons *graph* edges)))
+
+(defun add-edges-and-vertices-between* (&rest pairs)
+  (apply #'add-edges-and-vertices-between (cons *graph* pairs)))
+
+;;; utils
+
+(defun pretty-print (graph &optional (stream t))
+  (format stream "VERTICES: ~{~a~^, ~}~%EDGES: ~{~a~^, ~}~%" (vertices graph) (edges graph)))
+
+(defun graph-equals (graph1 graph2)
+  (and (= (vertex-count graph1)
+          (vertex-count graph2))
+       (eq (graph-vertex-equality-fn graph1)
+           (graph-vertex-equality-fn graph2))
+       (= (edge-count graph1)
+          (edge-count graph2))
+       (loop for vertex in (vertices graph1)
+             always (and (has-vertex graph2 vertex)
+                         (loop for edge in (out-edges graph1 vertex)
+                               always (has-edge-between graph2 (edge-source edge) (edge-target edge)))))))

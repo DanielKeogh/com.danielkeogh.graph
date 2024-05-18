@@ -18,8 +18,14 @@
                 :pathname "algorithms"
                 :depends-on ("structures" "utils")
                 :components ((:file "package")
-                             (:file "depth-first-search" :depends-on ("package"))
-                             (:file "breadth-first-search" :depends-on ("package"))
+                             ;; search
                              (:file "bidirectional-breadth-first-search" :depends-on ("package"))
+                             (:file "breadth-first-search" :depends-on ("package"))
+                             (:file "depth-first-search" :depends-on ("package"))
+                             ;; connected components
+                             (:file "strongly-connected-components" :depends-on ("depth-first-search"))
+                             ;; condensation
+                             (:file "condensate-vertices" :depends-on ("package"))
+                             ;; ??
                              (:file "minimum-spanning-tree" :depends-on ("package"
                                                                          "bidirectional-breadth-first-search"))))))
