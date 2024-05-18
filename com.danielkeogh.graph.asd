@@ -12,7 +12,8 @@
                 :depends-on ("utils")
                 :components ((:file "edge")
                              (:file "bidirectional" :depends-on ("edge"))
-                             (:file "api" :depends-on ("bidirectional" "edge"))))
+                             (:file "adjacency" :depends-on ("edge"))
+                             (:file "api" :depends-on ("adjacency" "bidirectional" "edge"))))
                (:module "algorithms"
                 :pathname "algorithms"
                 :depends-on ("structures" "utils")

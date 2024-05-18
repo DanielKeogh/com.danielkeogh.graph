@@ -2,10 +2,10 @@
 
 (defpackage #:com.danielkeogh.graph
   (:use #:cl)
-  (:local-nicknames
-   (#:bidirectional #:com.danielkeogh.graph.bidirectional)
-   (#:edge #:com.danielkeogh.graph.edge)
-   (#:utils #:com.danielkeogh.graph.utils))
+  (:local-nicknames (#:adjacency #:com.danielkeogh.graph.adjacency)
+                    (#:bidirectional #:com.danielkeogh.graph.bidirectional)
+                    (#:edge #:com.danielkeogh.graph.edge)
+                    (#:utils #:com.danielkeogh.graph.utils))
   (:export
    ;; constructors
    #:make-bidirectional-graph
@@ -13,14 +13,19 @@
    #:make-edge
 
    ;; builders
-   #:add-edge
    #:add-vertex
+   #:add-edge
    #:add-edges-and-vertices
    #:add-edge-between
-   #:remove-edge
    #:remove-vertex
+   #:remove-edge
    #:remove-edge-between
 
+   ;; tests
+   #:has-vertex
+   #:has-edge
+   #:has-edge-between
+   
    ;; graph accessors
    #:for-in-out-edges
    #:for-vertices
@@ -66,8 +71,8 @@
 
 ;; graph accessors
 
-(defgeneric graph-vertex-equality-fn (graph)
-  (:documentation "Get the function that checks if two vertices in the graph are the same"))
+(defgeneric has-vertex (graph vertex)
+  (:documentation "See if the vertex has been added."))
 
 (defgeneric out-edges (graph vertex)
   (:documentation "Get outbound edges for a given vertex."))
@@ -77,13 +82,14 @@
 
 (defgeneric for-vertices (graph fn)
   (:documentation "Apply a function to all verticies in the graph."))
-
+(trivial-indent:define-indentation for-vertices (4 &lambda))
 
 (defgeneric for-edges (graph fn)
   (:documentation "Apply a function to all edges in the graph."))
-
-(trivial-indent:define-indentation for-vertices (4 &lambda))
 (trivial-indent:define-indentation for-edges (4 &lambda))
+
+(defgeneric graph-vertex-equality-fn (graph)
+  (:documentation "Get the function that checks if two vertices in the graph are the same"))
 
 ;;; impl
 
@@ -92,9 +98,56 @@
 (defun make-edge (source target)
   (edge:make-edge source target))
 
+;; adjacency
+
+(defun make-adjacency-graph (&key (allow-parallel-edges t) (vertex-equality-fn #'eql))
+  (adjacency:make-graph :allow-parallel-edges allow-parallel-edges :vertex-equality-fn vertex-equality-fn))
+
+(defmethod add-edge ((graph adjacency:adjacency-graph) edge)
+  (adjacency:add-edge graph edge))
+
+(defmethod add-edge-between ((graph adjacency:adjacency-graph) vertex1 vertex2)
+  (adjacency:add-edge-between graph vertex1 vertex2))
+
+(defmethod add-vertex ((graph adjacency:adjacency-graph) vertex)
+  (adjacency:add-vertex graph vertex))
+
+(defmethod remove-edge ((graph adjacency:adjacency-graph) edge)
+  (adjacency:remove-edge graph edge))
+
+(defmethod remove-edge-between ((graph adjacency:adjacency-graph) vertex1 vertex2)
+  (adjacency:remove-edge-between graph vertex1 vertex2))
+
+(defmethod remove-vertex ((graph adjacency:adjacency-graph) vertex)
+  (adjacency:remove-vertex graph vertex))
+
+(defmethod in-edges ((graph adjacency:adjacency-graph) vertex)
+  (adjacency:in-edges graph vertex))
+
+(defmethod out-edges ((graph adjacency:adjacency-graph) vertex)
+  (adjacency:out-edges graph vertex))
+
+(defmethod graph-vertex-equality-fn ((graph adjacency:adjacency-graph))
+  (adjacency:graph-vertex-equality-fn graph))
+
+(defmethod for-vertices ((graph adjacency:adjacency-graph) fn)
+  (adjacency:for-vertices graph fn))
+
+(defmethod for-edges ((graph adjacency:adjacency-graph) fn)
+  (adjacency:for-edges graph fn))
+
+(defmethod has-vertex ((graph adjacency:adjacency-graph) vertex)
+  (adjacency:has-vertex graph vertex))
+
+(defmethod has-edge ((graph adjacency:adjacency-graph) edge)
+  (adjacency:has-edge graph edge))
+
+(defmethod has-edge-between ((graph adjacency:adjacency-graph) source target)
+  (adjacency:has-edge-between graph source target))
+
 ;; bidirectional
 
-(defun make-bidirectional-graph (&key (allow-parallel-edges t) (vertex-equality-fn #'equal))
+(defun make-bidirectional-graph (&key (allow-parallel-edges t) (vertex-equality-fn #'eql))
   (bidirectional:make-graph :allow-parallel-edges allow-parallel-edges :vertex-equality-fn vertex-equality-fn))
 
 (defmethod add-edge ((graph bidirectional:bidirectional-graph) edge)
@@ -130,6 +183,15 @@
 (defmethod for-edges ((graph bidirectional:bidirectional-graph) fn)
   (bidirectional:for-edges graph fn))
 
+(defmethod has-vertex ((graph bidirectional:bidirectional-graph) vertex)
+  (bidirectional:has-vertex graph vertex))
+
+(defmethod has-edge ((graph bidirectional:bidirectional-graph) edge)
+  (bidirectional:has-edge graph edge))
+
+(defmethod has-edge-between ((graph bidirectional:bidirectional-graph) source target)
+  (bidirectional:has-edge-between graph source target))
+
 ;; edge accessors
 
 (defun edge-source (edge)
@@ -151,7 +213,7 @@
 
 (trivial-indent:define-indentation add-edges-and-vertices (4 &body))
 
-(defun verticies (graph)
+(defun vertices (graph)
   "Get all verticies in the graph as a list."
   (utils:with-collector (collect)
     (for-vertices graph #'collect)))
@@ -190,8 +252,8 @@
   `(let ((*graph* ,graph))
      ,@body))
 
-(defmacro add-edge* (edge)
+(defun add-edge* (edge)
   (add-edge *graph* edge))
 
-(defmacro add-vertex* (vertex)
+(defun add-vertex* (vertex)
   (add-vertex *graph* vertex))

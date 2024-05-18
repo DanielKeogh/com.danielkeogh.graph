@@ -21,6 +21,7 @@
    ;; test
    #:has-vertex
    #:has-edge
+   #:has-edge-between
 
    ;; utils
    #:vertices
@@ -56,7 +57,7 @@
 
 (defun make-graph (&key
                      (allow-parallel-edges t)
-                     (vertex-equality-fn #'equal))
+                     (vertex-equality-fn #'eql))
   (make-bidirectional-graph
    :allow-parallel-edges allow-parallel-edges
    :vertex-in-edges (make-hash-table :test vertex-equality-fn)
@@ -86,7 +87,12 @@
   (when (nth-value 1 (gethash vertex (graph-vertex-out-edges graph)))
     t)) ;; return boolean type for speed and to protect against memory leaks
 
-(defun has-edge (graph source target)
+(defun has-edge (graph edge)
+  (declare (type bidirectional-graph graph))
+  (a:when-let (edges (gethash (edge:edge-source edge) (graph-vertex-out-edges graph)))
+    (find edge edges :test #'eql)))
+
+(defun has-edge-between (graph source target)
   (declare (type bidirectional-graph graph))
   (a:when-let (edges (gethash source (graph-vertex-out-edges graph)))
     (loop for edge in edges
@@ -109,7 +115,8 @@
       (ensure-vertex graph source)
       (ensure-vertex graph target)
       (add-edge-to-hash (graph-vertex-out-edges graph) source edge)
-      (add-edge-to-hash (graph-vertex-in-edges graph) target edge))))
+      (add-edge-to-hash (graph-vertex-in-edges graph) target edge)))
+  edge)
 
 (defun add-edge (graph edge)
   (declare (type bidirectional-graph graph)

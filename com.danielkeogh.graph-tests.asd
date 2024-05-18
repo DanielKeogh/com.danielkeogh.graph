@@ -11,7 +11,8 @@
                 ((:module "structures"
                   :pathname "structures"
                   :components ((:file "package")
-                               (:file "bidirectional")))
+                               (:file "bidirectional")
+                               (:file "api")))
                  (:module "algorithms"
                   :pathname "algorithms"
                   :components ((:file "package")

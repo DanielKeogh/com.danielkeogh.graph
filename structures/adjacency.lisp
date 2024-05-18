@@ -21,10 +21,12 @@
    ;; test
    #:has-vertex
    #:has-edge
+   #:has-edge-between
 
    ;; utils
    #:vertices
    #:edges
+   #:in-edges
    #:out-edges
 
    ;; accessors
@@ -52,7 +54,7 @@
 
 (defun make-graph (&key
                      (allow-parallel-edges t)
-                     (vertex-equality-fn #'equal))
+                     (vertex-equality-fn #'eql))
   (make-adjacency-graph
    :allow-parallel-edges allow-parallel-edges
    :vertex-edges (make-hash-table :test vertex-equality-fn)
@@ -81,7 +83,12 @@
   (when (nth-value 1 (gethash vertex (graph-vertex-edges graph)))
     t))
 
-(defun has-edge (graph source target)
+(defun has-edge (graph edge)
+  (declare (type adjacency-graph graph))
+  (a:when-let (edges (gethash (edge:edge-source edge) (graph-vertex-edges graph)))
+    (find edge edges :test #'eql)))
+
+(defun has-edge-between (graph source target)
   (declare (type adjacency-graph graph))
   (a:when-let (edges (gethash source (graph-vertex-edges graph)))
     (loop for edge in edges
@@ -90,7 +97,7 @@
 (defun add-vertex (graph vertex)
   (declare (type adjacency-graph graph))
   (unless (has-vertex graph vertex)
-    (setf (gethash vertex (graph-vertex-edges)) (make-edge-list))))
+    (setf (gethash vertex (graph-vertex-edges graph)) (make-edge-list))))
 
 (defun %add-edge (graph edge)
   (declare (type adjacency-graph graph)
@@ -100,7 +107,8 @@
         (target (edge:edge-target edge)))
     (ensure-vertex graph source)
     (ensure-vertex graph target)
-    (push edge (gethash source (graph-vertex-edges graph)))))
+    (push edge (gethash source (graph-vertex-edges graph))))
+  edge)
 
 (defun add-edge (graph edge)
   (declare (type adjacency-graph graph)
@@ -141,7 +149,6 @@
 
 (defun remove-vertex (graph vertex)
   (declare (type adjacency-graph graph))
-  (ensure-vertex graph vertex)
   (let ((eq-fn (graph-vertex-equality-fn graph)))
     (remhash vertex (graph-vertex-edges graph))
     (remove-in-edges graph (lambda (edge) (funcall eq-fn vertex (edge:edge-target edge))))))
@@ -161,6 +168,16 @@
 (defun out-edges (graph vertex)
   (declare (type adjacency-graph graph))
   (gethash vertex (graph-vertex-edges graph)))
+
+(defun in-edges (graph vertex)
+  (declare (type adjacency-graph graph))
+  (let ((vertex-hash (graph-vertex-edges graph))
+        (vertex-eq (graph-vertex-equality-fn graph)))
+    (loop for val being the hash-values of vertex-hash
+          nconc (remove-if-not
+                 (lambda (edge)
+                   (funcall vertex-eq vertex (edge:edge-target edge)))
+                 val))))
 
 ;; looping without malloc
 
