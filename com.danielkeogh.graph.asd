@@ -13,11 +13,11 @@
                 :components ((:file "edge")
                              (:file "adjacency" :depends-on ("edge"))
                              (:file "bidirectional" :depends-on ("edge"))
-                             (:file "bidirectional-matrix" :depends-on ("edge"))
-                             (:file "api" :depends-on ("adjacency" "bidirectional" "edge"))))
+                             (:file "bidirectional-matrix" :depends-on ("edge"))))
+               (:file "api" :depends-on ("structures"))
                (:module "algorithms"
                 :pathname "algorithms"
-                :depends-on ("structures" "utils")
+                :depends-on ("structures" "utils" "api")
                 :components ((:file "package")
                              ;; search
                              (:file "bidirectional-breadth-first-search" :depends-on ("package"))
