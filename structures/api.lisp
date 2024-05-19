@@ -4,12 +4,14 @@
   (:use #:cl)
   (:local-nicknames (#:adjacency #:com.danielkeogh.graph.adjacency)
                     (#:bidirectional #:com.danielkeogh.graph.bidirectional)
+                    (#:bidirectional-matrix #:com.danielkeogh.graph.bidirectional-matrix)
                     (#:edge #:com.danielkeogh.graph.edge)
                     (#:utils #:com.danielkeogh.graph.utils))
   (:export
    ;; constructors
-   #:make-bidirectional-graph
    #:make-adjacency-graph
+   #:make-bidirectional-graph
+   #:make-bidirectional-matrix-graph
    #:make-edge
 
    ;; builders
@@ -222,6 +224,60 @@
 
 (defmethod edge-count ((graph bidirectional:bidirectional-graph))
   (bidirectional:edge-count graph))
+
+;; bidirectional-matrix
+
+(defun make-bidirectional-matrix-graph (vertex-count)
+  (bidirectional-matrix:make-graph vertex-count))
+
+(defmethod add-edge ((graph bidirectional-matrix:bidirectional-matrix-graph) edge)
+  (bidirectional-matrix:add-edge graph edge))
+
+(defmethod add-edge-between ((graph bidirectional-matrix:bidirectional-matrix-graph) vertex1 vertex2)
+  (bidirectional-matrix:add-edge-between graph vertex1 vertex2))
+
+(defmethod add-vertex ((graph bidirectional-matrix:bidirectional-matrix-graph) vertex)
+  (unless (bidirectional-matrix:has-vertex graph vertex)
+    (error "bidirectional-matrix-graph cannot support adding of new vertices")))
+
+(defmethod remove-edge ((graph bidirectional-matrix:bidirectional-matrix-graph) edge)
+  (bidirectional-matrix:remove-edge graph edge))
+
+(defmethod remove-edge-between ((graph bidirectional-matrix:bidirectional-matrix-graph) vertex1 vertex2)
+  (bidirectional-matrix:remove-edge-between graph vertex1 vertex2))
+
+(defmethod remove-vertex ((graph bidirectional-matrix:bidirectional-matrix-graph) vertex)
+  (error "bidirectional-matrix-graph cannot support removal of vertices"))
+
+(defmethod in-edges ((graph bidirectional-matrix:bidirectional-matrix-graph) vertex)
+  (bidirectional-matrix:in-edges graph vertex))
+
+(defmethod out-edges ((graph bidirectional-matrix:bidirectional-matrix-graph) vertex)
+  (bidirectional-matrix:out-edges graph vertex))
+
+(defmethod graph-vertex-equality-fn ((graph bidirectional-matrix:bidirectional-matrix-graph))
+  (bidirectional-matrix:graph-vertex-equality-fn graph))
+
+(defmethod for-vertices ((graph bidirectional-matrix:bidirectional-matrix-graph) fn)
+  (bidirectional-matrix:for-vertices graph fn))
+
+(defmethod for-edges ((graph bidirectional-matrix:bidirectional-matrix-graph) fn)
+  (bidirectional-matrix:for-edges graph fn))
+
+(defmethod has-vertex ((graph bidirectional-matrix:bidirectional-matrix-graph) vertex)
+  (bidirectional-matrix:has-vertex graph vertex))
+
+(defmethod has-edge ((graph bidirectional-matrix:bidirectional-matrix-graph) edge)
+  (bidirectional-matrix:has-edge graph edge))
+
+(defmethod has-edge-between ((graph bidirectional-matrix:bidirectional-matrix-graph) source target)
+  (bidirectional-matrix:has-edge-between graph source target))
+
+(defmethod vertex-count ((graph bidirectional-matrix:bidirectional-matrix-graph))
+  (bidirectional-matrix:vertex-count graph))
+
+(defmethod edge-count ((graph bidirectional-matrix:bidirectional-matrix-graph))
+  (bidirectional-matrix:edge-count graph))
 
 ;; edge accessors
 
