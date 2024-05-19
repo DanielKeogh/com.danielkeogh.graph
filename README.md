@@ -3,8 +3,11 @@
 This library contains graph datastructures and algorithms.
 
 [Getting started](#getting-started)
+
 [What is a graph?](#what-is-a-graph)
+
 [API](#api)
+
 [History and inspiration](#history-and-inspiration)
 
 # Getting started
