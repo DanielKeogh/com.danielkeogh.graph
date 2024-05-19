@@ -14,7 +14,9 @@
 
    ;; builders
    #:add-vertex
+   #:add-vertices
    #:add-edge
+   #:add-edges
    #:add-edges-and-vertices
    #:add-edges-and-vertices-between
    #:add-edge-between
@@ -230,6 +232,16 @@
   (edge:edge-target edge))
 
 ;; utils
+
+(defun add-vertices (graph &rest vertices)
+  (dolist (vertex vertices)
+    (add-vertex graph vertex)))
+(trivial-indent:define-indentation add-vertices (4 &body))
+
+(defun add-edges (graph &rest edges)
+  (dolist (edge edges)
+    (add-edge graph edge)))
+(trivial-indent:define-indentation add-edges (4 &body))
 
 (defun add-edges-and-vertices (graph &rest edges)
   "Add a collection of edges to the graph, ensuring that their vertices are also added"

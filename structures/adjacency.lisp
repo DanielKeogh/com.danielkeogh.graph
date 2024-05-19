@@ -109,8 +109,10 @@
         (target (edge:edge-target edge)))
     (ensure-vertex graph source)
     (ensure-vertex graph target)
-    (push edge (gethash source (graph-vertex-edges graph))))
-  edge)
+    (when (or (graph-allow-parallel-edges graph)
+              (not (has-edge-between graph source target)))
+      (push edge (gethash source (graph-vertex-edges graph)))
+      edge)))
 
 (defun add-edge (graph edge)
   (declare (type adjacency-graph graph)

@@ -20,7 +20,7 @@
 (defmacro do-all-graphs ((var &rest args) &body body)
   (alexandria:with-gensyms (constructor)
     `(dolist (,constructor *constructors*)
-       (let ((,var (apply ,constructor ,args)))
+       (let ((,var (apply ,constructor (list ,@args))))
          ,@body))))
 
 (defun sort-edges (edges)
@@ -53,6 +53,15 @@
     (api:add-vertex g 2)
     (api:add-edge g (edge:make-edge 1 2))
     (is (= 1 (length (api:edges g))))))
+
+(test add-edges
+  (do-all-graphs (g)
+    (api:add-vertices g 0 1 2)
+    (let ((e1 (api:make-edge 0 1))
+          (e2 (api:make-edge 1 2)))
+      (api:add-edges g e1 e2)
+      (is-true (api:has-edge g e1))
+      (is-true (api:has-edge g e2)))))
 
 (test add-edges-and-vertices
   (do-all-graphs (g)
@@ -213,3 +222,27 @@
       (api:add-vertex* 1)
       (api:add-edge* (api:make-edge 0 1)))
     (is-true (api:has-edge-between g 0 1))))
+
+;; parallel edges
+
+(test allow-parallel-edges
+  (do-all-graphs (g :allow-parallel-edges t)
+    (api:add-vertices g 0 1)
+    (let ((e1 (api:make-edge 0 1))
+          (e2 (api:make-edge 0 1)))
+
+      (is-true (api:add-edge g e1))
+      (is-true (api:add-edge g e2))
+      (is-true (api:has-edge g e1))
+      (is-true (api:has-edge g e2)))))
+
+(test disallow-parallel-edges
+  (do-all-graphs (g :allow-parallel-edges nil)
+    (api:add-vertices g 0 1)
+    (let ((e1 (api:make-edge 0 1))
+          (e2 (api:make-edge 0 1)))
+
+      (is-true (api:add-edge g e1))
+      (is-false (api:add-edge g e2))
+      (is-true (api:has-edge g e1))
+      (is-false (api:has-edge g e2)))))
