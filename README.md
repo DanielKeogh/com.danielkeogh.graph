@@ -63,6 +63,22 @@ A directed acyclic graph (DAG) is a [Directed Graph](#directed-graph) where no e
 
 Vertices are considered strongly connected when they are a part of a loop. That is, any given vertex in the set of strongly connected vertices can be used as a starting point to traverse to any other.
 
+### Clique
+
+A clique is a [complete](#complete-graph) sub-graph of another graph. That is, it is some set of vertices where all vertices are connected via edges to all other vertices in the set.
+
+### Maximum Clique
+
+A [clique](#clique) with as many, or more vertices than any other clique in the graph.
+
+### Maximal Clique
+
+A [clique](#clique) that is not a proper sub-graph of another proper sub-graph. It may or may not be the [maximum clique](#maximum-clique) of the graph, and it is not part of any bigger clique.
+
+### Complete Graph
+
+An undirected graph in which every vertex is connected by a single edge to every other vertex.
+
 # API
 
 ## Constructors
