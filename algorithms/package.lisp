@@ -13,7 +13,8 @@
    #:depth-first-search
    ;; connected components
    #:strongly-connected-components
-   #:strongly-connected-components->graphs
+   #:weakly-connected-components
+   #:connected-components->graphs
    ;; condensation
    #:condensate-vertices
    #:condensate-strongly-connected-vertices

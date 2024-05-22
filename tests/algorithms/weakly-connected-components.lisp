@@ -1,13 +1,13 @@
-;;;; test/algorithms/strongly-connected-components.lisp
+;;;; test/algorithms/weakly-connected-components.lisp
 
 (in-package :com.danielkeogh.graph-tests.algorithms)
 
-(def-suite strongly-connected-components-tests
-  :description "Tests for strongly-connected-components algorithm")
+(def-suite weakly-connected-components-tests
+  :description "Tests for weakly-connected-components algorithm")
 
-(in-suite strongly-connected-components-tests)
+(in-suite weakly-connected-components-tests)
 
-(test strongly-connected-components
+(test weakly-connected-components
   (let ((g (api:make-bidirectional-graph)))
     (api:add-edges-and-vertices g
       ;; loop 1
@@ -31,9 +31,9 @@
       ;; line
       (api:make-edge 15 16) (api:make-edge 16 17))
     (multiple-value-bind (components component-count)
-        (alg:strongly-connected-components g)
+        (alg:weakly-connected-components g)
       (let* ((graphs (alg:connected-components->graphs g components component-count)))
-        (is (= 12 (length graphs)))
+        (is (= 6 (length graphs)))
         (is-true (find (api:with-graph* ((api:make-bidirectional-graph))
                          (api:add-edges-and-vertices-between*
                           0 1
@@ -46,6 +46,7 @@
         
         (is-true (find (api:with-graph* ((api:make-bidirectional-graph))
                          (api:add-edges-and-vertices-between*
+                          10 11
                           11 12
                           12 13
                           13 11))

@@ -22,6 +22,7 @@
                                (:file "depth-first-search")
                                ;; connected components
                                (:file "strongly-connected-components")
+                               (:file "weakly-connected-components")
                                ;; condensation
                                (:file "condensate-vertices")
                                ;; ??

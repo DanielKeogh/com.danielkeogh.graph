@@ -14,6 +14,8 @@
                              (root-vertex nil)
                              (process-all-vertices nil)
                              (max-depth most-positive-fixnum)
+                             (on-start-vertex-fn #'identity)
+                             (on-tree-edge-fn #'identity)
                              (on-discover-vertex-fn #'identity)
                              (on-back-edge-fn #'identity)
                              (on-forward-or-cross-edge-fn #'identity)
@@ -44,6 +46,7 @@
                                (setf edges (cdr edges))
                                (case color
                                  (:white
+                                  (funcall on-tree-edge-fn edge)
                                   (push (make-search-frame u edges depth) todo-stack)
                                   (setf u vertex
                                         edges (out-edges u)
@@ -61,9 +64,11 @@
              (visit-all-vertices ()
                (loop for vertex in (graph:vertices graph)
                      unless (gethash vertex vertex-colors)
-                       do (dfs vertex))))
+                       do (funcall on-start-vertex-fn vertex)
+                          (dfs vertex))))
       (if root-vertex
           (progn (dfs root-vertex)
+                 (funcall on-start-vertex-fn root-vertex)
                  (when process-all-vertices
                    (visit-all-vertices)))
           (visit-all-vertices)))))

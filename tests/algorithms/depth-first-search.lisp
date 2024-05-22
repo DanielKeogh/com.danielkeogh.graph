@@ -37,22 +37,21 @@
     ;; Loop
     (api:add-edge-between g :6a :5a) 
 
-    (labels ((print-visited-vertex (stream)
+    (labels ((print-visited (stream)
                (lambda (vertex) (format stream "~A " vertex))))
-      (utils:let-with-string-streams (vertex-finished discover-vertex back-edge forward-or-cross-edge)
+      (utils:let-with-string-streams (start-vertex tree-edge vertex-finished discover-vertex back-edge forward-or-cross-edge)
           (alg:depth-first-search g
            :root-vertex :1
-           :on-vertex-finished-fn (print-visited-vertex vertex-finished) 
-           :on-discover-vertex-fn (print-visited-vertex discover-vertex)
-           :on-back-edge-fn (print-visited-vertex back-edge)
-           :on-forward-or-cross-edge-fn (print-visited-vertex forward-or-cross-edge))
+           :on-start-vertex-fn (print-visited start-vertex)
+           :on-tree-edge-fn (print-visited tree-edge)
+           :on-vertex-finished-fn (print-visited vertex-finished) 
+           :on-discover-vertex-fn (print-visited discover-vertex)
+           :on-back-edge-fn (print-visited back-edge)
+           :on-forward-or-cross-edge-fn (print-visited forward-or-cross-edge))
 
+        (is (equalp "1 " start-vertex))
+        (is (equalp "1->2B 2B->3 3->4 4->5A 5A->6A 4->5 5->6 1->2A " tree-edge))
         (is (equalp "6A 5A 6 5 4 3 2B 2A 1 " vertex-finished))
         (is (equalp "1 2B 3 4 5A 6A 5 6 2A " discover-vertex))
         (is (equalp "5a 3 " back-edge))
         (is (equalp "" forward-or-cross-edge))))))
-
-#|
-TODO:
-
-|#

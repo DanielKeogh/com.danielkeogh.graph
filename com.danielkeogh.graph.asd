@@ -26,7 +26,9 @@
                              (:file "breadth-first-search" :depends-on ("package"))
                              (:file "depth-first-search" :depends-on ("package"))
                              ;; connected components
-                             (:file "strongly-connected-components" :depends-on ("depth-first-search"))
+                             (:file "strongly-connected-components" :depends-on ("package" "depth-first-search"))
+                             (:file "weakly-connected-components" :depends-on ("package" "depth-first-search"))
+                             (:file "connected-components-utils" :depends-on ("package"))
                              ;; condensation
                              (:file "condensate-vertices" :depends-on ("package"))
                              ;; ??
