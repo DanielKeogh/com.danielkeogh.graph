@@ -19,6 +19,8 @@
                 :pathname "algorithms"
                 :depends-on ("structures" "utils" "api")
                 :components ((:file "package")
+                             ;; assignment
+                             (:file "hungarian-assignment" :depends-on ("package"))
                              ;; search
                              (:file "bidirectional-breadth-first-search" :depends-on ("package"))
                              (:file "breadth-first-search" :depends-on ("package"))
