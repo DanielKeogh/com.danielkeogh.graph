@@ -79,6 +79,12 @@ A [clique](#clique) that is not a proper sub-graph of another proper sub-graph. 
 
 An undirected graph in which every vertex is connected by a single edge to every other vertex.
 
+### Graph Partitioning
+
+[Graph Partioning](https://en.wikipedia.org/wiki/Graph_partition) is shrinking a graph into a smaller graph by grouping sets of related vertices into a single vertex. Edges to and from the grouped vertices to vertices outside of this group are still maintained.
+
+The most well-known algorithm for graph partitioning is the [Kernighan-Lin algorithm](#kerninghan-lin-algorithm).
+
 # API
 
 ## Constructors
@@ -92,3 +98,41 @@ An undirected graph in which every vertex is connected by a single edge to every
 This library has largely been inspired by the library [QuikGraph](https://github.com/KeRNeLith/QuikGraph), with many ideas and algorithms ripped from it wholesale.
 
 I (Daniel Keogh) wrote this library because I could not find any fantastic graph libraries that are part of the common lisp ecosytem. When I have time, I enjoy solving [Project Euler](https://projecteuler.net/) problems, which are often most sanely modelled in graphs.
+
+
+# Algorithms
+
+This library provides a collection of popular graph-traversing algorithms for your convenience.
+
+## Search Algorithms
+
+### Bidirectional Depth First Search Algorithm
+
+### Breadth First Search Algorithm
+
+### Depth First Search Algorithm
+
+## Connected Components Algorithms
+
+### Strongly Connected Components Algorithm
+
+Also see [utilities](#connected-components-algorithm-utilities) for convience functions related to this algorithm.
+
+### Weakly Connected Components Algorithm
+
+Also see [utilities](#connected-components-algorithm-utilities) for convience functions related to this algorithm.
+
+### Connected Components Algorithm Utilities
+
+## Condensation Algorithms
+
+### Condensate Vertices Algorithm
+
+This algorithm condensates either a graphs strongly or weakly connected sets of vertices into a new graph, where each vertex is a graph containing the condensed vertices and their connected edges.
+
+TODO: Decide whether or not condensation just belongs under (Connnected Components Algorithm Utilities)[#connected-component-algorithm-utilities]
+
+## Graph Partition Algorithms
+
+### Kerninghan-Lin Algorithm
+

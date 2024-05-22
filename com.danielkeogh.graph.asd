@@ -31,6 +31,6 @@
                              (:file "connected-components-utils" :depends-on ("package"))
                              ;; condensation
                              (:file "condensate-vertices" :depends-on ("package"))
-                             ;; ??
+                             ;; minimum spanning tree
                              (:file "minimum-spanning-tree" :depends-on ("package"
                                                                          "bidirectional-breadth-first-search"))))))
