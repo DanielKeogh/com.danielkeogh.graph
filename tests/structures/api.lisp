@@ -2,15 +2,16 @@
 
 (in-package #:com.danielkeogh.graph-tests.structures)
 
-(def-suite api-graph-tests
+(def-suite structures-tests
   :description "api graph tests")
 
-(in-suite api-graph-tests)
+(in-suite structures-tests)
 
 ;; helpers
 
 (defparameter *constructors* '(api:make-adjacency-graph
-                               api:make-bidirectional-graph))
+                               api:make-bidirectional-graph
+                               api:make-undirected-graph))
 
 (defmacro without-constructors ((&rest constructors) &body body)
   (alexandria:with-gensyms (c)
@@ -22,6 +23,16 @@
     `(dolist (,constructor *constructors*)
        (let ((,var (apply ,constructor (list ,@args))))
          ,@body))))
+
+(defmacro do-all-directed-graphs ((var &rest args) &body body)
+  `(do-all-graphs (,var ,@args)
+     (when (api:is-directed ,var)
+       ,@body)))
+
+(defmacro do-all-undirected-graphs ((var &rest args) &body body)
+  `(do-all-graphs (,var ,@args)
+     (unless (api:is-directed ,var)
+       ,@body)))
 
 (defun sort-edges (edges)
   (sort edges
@@ -133,7 +144,7 @@
 ;; graph accessors
 
 (test out-edges
-  (do-all-graphs (g)
+  (do-all-directed-graphs (g)
     (api:add-vertex g 1)
     (api:add-vertex g 2)
     (api:add-vertex g 3)
@@ -145,7 +156,7 @@
       (is (equal (list edge1 edge2) (sort-edges (api:out-edges g 1)))))))
 
 (test in-edges
-  (do-all-graphs (g)
+  (do-all-directed-graphs (g)
     (api:add-vertex g 1)
     (api:add-vertex g 2)
     (api:add-vertex g 3)
@@ -156,6 +167,18 @@
       (is (equal (list edge3) (api:in-edges g 2)))
       (is (equal (list edge1 edge2) (sort-edges (api:in-edges g 1)))))))
 
+(test adjacent-edges
+  (do-all-undirected-graphs (g)
+    (api:add-vertex g 1)
+    (api:add-vertex g 2)
+    (api:add-vertex g 3)
+    (is-false (api:adjacent-edges g 1))
+    (let ((edge1 (api:add-edge-between g 2 1))
+          (edge2 (api:add-edge-between g 3 1))
+          (edge3 (api:add-edge-between g 3 2)))
+      (is (equal (list edge1 edge3) (sort-edges (api:adjacent-edges g 2))))
+      (is (equal (list edge1 edge2) (sort-edges (api:adjacent-edges g 1)))))))
+
 (test vertices
   (do-all-graphs (g)
     (is-false (api:edges g))
@@ -164,13 +187,14 @@
     (is (equal (list 1 2) (sort (api:vertices g) #'<)))))
 
 (test roots
-  (do-all-graphs (g)
-    (api:add-edges-and-vertices g
-      (api:make-edge 0 :a)
-      (api:make-edge 1 :a)
-      (api:make-edge :a :b)
-      (api:make-edge :b :c))
-    (is (equal '(0 1) (sort (api:roots g) '<)))))
+  (without-constructors '(api:make-undirected-graph)
+    (do-all-graphs (g)
+      (api:add-edges-and-vertices g
+        (api:make-edge 0 :a)
+        (api:make-edge 1 :a)
+        (api:make-edge :a :b)
+        (api:make-edge :b :c))
+      (is (equal '(0 1) (sort (api:roots g) '<))))))
 
 (test edges
   (do-all-graphs (g)

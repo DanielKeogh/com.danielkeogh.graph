@@ -18,5 +18,7 @@
    ;; condensation
    #:condensate-vertices
    #:condensate-strongly-connected-vertices
+   ;; graph partition
+   #:kernighan-lin-partition
    ;; ??
    #:minimum-spanning-tree))

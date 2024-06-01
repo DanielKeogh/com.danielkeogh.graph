@@ -25,5 +25,7 @@
                                (:file "weakly-connected-components")
                                ;; condensation
                                (:file "condensate-vertices")
+                               ;; graph partition
+                               (:file "kernighan-lin")
                                ;; ??
                                (:file "minimum-spanning-tree")))))))

@@ -7,21 +7,21 @@
    #:let-with-string-streams
    #:with-collector
    #:with-maximizer
-   #:with-minimizer))
+   #:with-minimizer
+   #:with-counter))
 
 (in-package #:com.danielkeogh.graph.utils)
 
 (defun required-argument (name)
   (alexandria:required-argument name))
 
-
 (defmacro let-with-string-streams (vars with-streams &body body)
   "Creating a bunch of nested `with-output-to-string` and then binding them to separate variables is a pain.
 This macro takes that pain away! You can use it like this:
 ```
 (utils:let-with-string-streams (s1 s2)
-   (progn (princ "foo" s1)
-          (princ "bar" s2))
+   (progn (princ \"foo\" s1)
+          (princ \"bar\" s2))
    (values s1 s2))
 ```
 "
@@ -70,3 +70,13 @@ This macro takes that pain away! You can use it like this:
                             ,max-val ,arg-val)))))
          ,@body)
        (values ,max ,max-val))))
+
+(defmacro with-counter ((counter-fn) &body body)
+  "Count"
+  (alexandria:with-gensyms (count arg)
+    `(let ((,count 0))
+       (labels ((,counter-fn (,arg)
+                  (when ,arg
+                    (incf ,count))))
+         ,@body)
+       ,count)))

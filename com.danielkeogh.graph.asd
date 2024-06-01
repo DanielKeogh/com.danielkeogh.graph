@@ -13,7 +13,8 @@
                 :components ((:file "edge")
                              (:file "adjacency" :depends-on ("edge"))
                              (:file "bidirectional" :depends-on ("edge"))
-                             (:file "bidirectional-matrix" :depends-on ("edge"))))
+                             (:file "bidirectional-matrix" :depends-on ("edge"))
+                             (:file "undirected" :depends-on ("edge"))))
                (:file "api" :depends-on ("structures"))
                (:module "algorithms"
                 :pathname "algorithms"
@@ -31,6 +32,8 @@
                              (:file "connected-components-utils" :depends-on ("package"))
                              ;; condensation
                              (:file "condensate-vertices" :depends-on ("package"))
+                             ;; graph partition
+                             (:file "kernighan-lin" :depends-on ("package"))
                              ;; minimum spanning tree
                              (:file "minimum-spanning-tree" :depends-on ("package"
                                                                          "bidirectional-breadth-first-search"))))))

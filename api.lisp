@@ -5,6 +5,7 @@
   (:local-nicknames (#:adjacency #:com.danielkeogh.graph.adjacency)
                     (#:bidirectional #:com.danielkeogh.graph.bidirectional)
                     (#:bidirectional-matrix #:com.danielkeogh.graph.bidirectional-matrix)
+                    (#:undirected #:com.danielkeogh.graph.undirected)
                     (#:edge #:com.danielkeogh.graph.edge)
                     (#:utils #:com.danielkeogh.graph.utils))
   (:export
@@ -12,6 +13,7 @@
    #:make-adjacency-graph
    #:make-bidirectional-graph
    #:make-bidirectional-matrix-graph
+   #:make-undirected-graph
    #:make-edge
 
    ;; builders
@@ -27,6 +29,7 @@
    #:remove-edge-between
 
    ;; tests
+   #:is-directed
    #:has-vertex
    #:has-edge
    #:has-edge-between
@@ -38,6 +41,7 @@
    #:for-roots
    #:for-edges
 
+   #:adjacent-edges
    #:out-edges
    #:in-edges
    #:vertices
@@ -62,9 +66,23 @@
 
    ;; utils
    #:pretty-print
-   #:graph-equals))
+   #:graph-equals
+
+   ;; conditions
+   #:unsupported-generic))
 
 (in-package #:com.danielkeogh.graph)
+
+;;; conditions
+
+(define-condition unsupported-generic (error)
+  ((supported-by :initarg :supported-by
+                 :accessor unsupported-generic-supported-by))
+  (:report (lambda (condition stream)
+             (format stream
+                     "Method is invalid for this type of graph. It is only supported by ~S.~&"
+                     (unsupported-generic-supported-by condition))))
+  (:documentation "This graph cannot support this generic."))
 
 ;;; generics
 
@@ -89,11 +107,14 @@
 (defgeneric has-vertex (graph vertex)
   (:documentation "See if the vertex has been added."))
 
+(defgeneric adjacent-edges (graph vertex)
+  (:documentation "Get adjacent edges for a given vertex. Only supported for undirected graphs."))
+
 (defgeneric out-edges (graph vertex)
-  (:documentation "Get outbound edges for a given vertex."))
+  (:documentation "Get outbound edges for a given vertex. Only supported for directed graphs."))
 
 (defgeneric in-edges (graph vertex)
-  (:documentation "Get inbound edges for a given vertex."))
+  (:documentation "Get inbound edges for a given vertex. Only supported for directed graphs."))
 
 (defgeneric for-vertices (graph fn)
   (:documentation "Apply a function to all verticies in the graph."))
@@ -111,6 +132,20 @@
 
 (defgeneric edge-count (graph)
   (:documentation "Total count of edges in the graph"))
+
+(defgeneric is-directed (graph)
+  (:documentation "Is it a directed graph?"))
+
+;;; unsupported
+
+(defmethod in-edges (graph vertex)
+  (error 'unsupported-generic :supported-by "directed graphs"))
+
+(defmethod out-edges (graph vertex)
+  (error 'unsupported-generic :supported-by "directed graphs"))
+
+(defmethod adjacent-edges (graph vertex)
+  (error 'unsupported-generic :supported-by "undirected graphs"))
 
 ;;; impl
 
@@ -156,6 +191,9 @@
 
 (defmethod for-edges ((graph adjacency:adjacency-graph) fn)
   (adjacency:for-edges graph fn))
+
+(defmethod is-directed ((graph adjacency:adjacency-graph))
+  t)
 
 (defmethod has-vertex ((graph adjacency:adjacency-graph) vertex)
   (adjacency:has-vertex graph vertex))
@@ -209,6 +247,9 @@
 
 (defmethod for-edges ((graph bidirectional:bidirectional-graph) fn)
   (bidirectional:for-edges graph fn))
+
+(defmethod is-directed ((graph bidirectional:bidirectional-graph))
+  t)
 
 (defmethod has-vertex ((graph bidirectional:bidirectional-graph) vertex)
   (bidirectional:has-vertex graph vertex))
@@ -264,6 +305,9 @@
 (defmethod for-edges ((graph bidirectional-matrix:bidirectional-matrix-graph) fn)
   (bidirectional-matrix:for-edges graph fn))
 
+(defmethod is-directed ((graph bidirectional-matrix:bidirectional-matrix-graph))
+  t)
+
 (defmethod has-vertex ((graph bidirectional-matrix:bidirectional-matrix-graph) vertex)
   (bidirectional-matrix:has-vertex graph vertex))
 
@@ -278,6 +322,62 @@
 
 (defmethod edge-count ((graph bidirectional-matrix:bidirectional-matrix-graph))
   (bidirectional-matrix:edge-count graph))
+
+;; undirected
+
+(defun make-undirected-graph (&key
+                                (allow-parallel-edges t)
+                                (vertex-equality-fn #'eql))
+  (undirected:make-graph :allow-parallel-edges allow-parallel-edges
+                         :vertex-equality-fn vertex-equality-fn))
+
+(defmethod add-edge ((graph undirected:undirected-graph) edge)
+  (undirected:add-edge graph edge))
+
+(defmethod add-edge-between ((graph undirected:undirected-graph) vertex1 vertex2)
+  (undirected:add-edge-between graph vertex1 vertex2))
+
+(defmethod add-vertex ((graph undirected:undirected-graph) vertex)
+  (undirected:add-vertex graph vertex))
+
+(defmethod remove-edge ((graph undirected:undirected-graph) edge)
+  (undirected:remove-edge graph edge))
+
+(defmethod remove-edge-between ((graph undirected:undirected-graph) vertex1 vertex2)
+  (undirected:remove-edge-between graph vertex1 vertex2))
+
+(defmethod remove-vertex ((graph undirected:undirected-graph) vertex)
+  (undirected:remove-vertex graph vertex))
+
+(defmethod adjacent-edges ((graph undirected:undirected-graph) vertex)
+  (undirected:adjacent-edges graph vertex))
+
+(defmethod graph-vertex-equality-fn ((graph undirected:undirected-graph))
+  (undirected:graph-vertex-equality-fn graph))
+
+(defmethod for-vertices ((graph undirected:undirected-graph) fn)
+  (undirected:for-vertices graph fn))
+
+(defmethod for-edges ((graph undirected:undirected-graph) fn)
+  (undirected:for-edges graph fn))
+
+(defmethod is-directed ((graph undirected:undirected-graph))
+  nil)
+
+(defmethod has-vertex ((graph undirected:undirected-graph) vertex)
+  (undirected:has-vertex graph vertex))
+
+(defmethod has-edge ((graph undirected:undirected-graph) edge)
+  (undirected:has-edge graph edge))
+
+(defmethod has-edge-between ((graph undirected:undirected-graph) source target)
+  (undirected:has-edge-between graph source target))
+
+(defmethod vertex-count ((graph undirected:undirected-graph))
+  (undirected:vertex-count graph))
+
+(defmethod edge-count ((graph undirected:undirected-graph))
+  (undirected:edge-count graph))
 
 ;; edge accessors
 
