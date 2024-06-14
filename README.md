@@ -22,26 +22,25 @@ Create and manipulate graphs like this:
 (in-package #:my-package)
 
 (let ((graph (g:make-bidirectional-graph)))
-  (g:add-vertex graph 0)
-  (g:add-vertex graph 1)
-  (g:add-edge 0 1))
+  (g:add-vertices graph 0 1)
+  (g:add-edge graph 0 1))
 ```
 
 # What is a graph?
 
-A graph is a datastructure that represents links between nodes. In [graph theory](https://en.wikipedia.org/wiki/Graph_theory) these nodes are called [verticies](#vertex) and the links between them are called [edges](#edge). 
+A graph is a datastructure that represents connections between nodes. In [graph theory](https://en.wikipedia.org/wiki/Graph_theory) these nodes are called [verticies](#vertex) and the links between them are called [edges](#edge). 
 
 ## Defining terms
 
-The names used in the API are derived from graph theory terminology. For the sake of those who've never studied graph theory, or for those that haven't looked at it for a while, here are some definitions.
+The names used in the API are derived from graph theory terminology. For those unfamiliar with graph theory, or for those needing a refresher, here are some definitions:
 
 ### Vertex
 
-A vertex is a node or point in a graph. Multiple are called vertexes or vertices. We prefer to use "vertices" in this library.
+A vertex is a node or point in a graph. Multiple are called vertices. ("Vertexes" is a valid alternative, but is less preferred by most surveyed programmers.)
 
 ### Edge
 
-A link between two vertices. Edges may be directed or undirected. Also called arcs, or lines.
+An edge is a connection between two vertices. Edges may be directed or undirected, also known as arcs or lines.
 
 ### Parallel Edges
 
@@ -65,39 +64,33 @@ Vertices are considered strongly connected when they are a part of a loop. That 
 
 ### Clique
 
-A clique is a [complete](#complete-graph) sub-graph of another graph. That is, it is some set of vertices where all vertices are connected via edges to all other vertices in the set.
+A clique is a [complete](#complete-graph) sub-graph of another graph. It is a subset of vertices where all vertices are connected via edges to all other vertices in the set.
 
 ### Maximum Clique
 
-A [clique](#clique) with as many, or more vertices than any other clique in the graph.
+The [clique](#clique) with the maximum number of vertices in the graph.
 
 ### Maximal Clique
 
-A [clique](#clique) that is not a proper sub-graph of another proper sub-graph. It may or may not be the [maximum clique](#maximum-clique) of the graph, and it is not part of any bigger clique.
+A [clique](#clique) that is not sub-graph of any other clique.
 
 ### Complete Graph
 
-An undirected graph in which every vertex is connected by a single edge to every other vertex.
+An undirected graph in which every vertex is connected to every other vertex by a single edge.
 
 ### Graph Partitioning
 
-[Graph Partioning](https://en.wikipedia.org/wiki/Graph_partition) is shrinking a graph into a smaller graph by grouping sets of related vertices into a single vertex. Edges to and from the grouped vertices to vertices outside of this group are still maintained.
-
-The most well-known algorithm for graph partitioning is the [Kernighan-Lin algorithm](#kerninghan-lin-algorithm).
+[Graph Partioning](https://en.wikipedia.org/wiki/Graph_partition) is the process of dividing a graph into smaller sub-graphs by grouping sets of related vertices into a single vertex. The edges connecting the grouped vertices ot other vertices are maintained. A well-known algorithm for graph partitioning is the [Kernighan-Lin algorithm](#kerninghan-lin-algorithm).
 
 # API
 
 ## Constructors
 
-### `make-bidirectional-graph`
-
-### `make-adjacency-graph`
-
 # History and inspiration
 
 This library has largely been inspired by the library [QuikGraph](https://github.com/KeRNeLith/QuikGraph), with many ideas and algorithms ripped from it wholesale.
 
-I (Daniel Keogh) wrote this library because I could not find any fantastic graph libraries that are part of the common lisp ecosytem. When I have time, I enjoy solving [Project Euler](https://projecteuler.net/) problems, which are often most sanely modelled in graphs.
+I wrote this library because I could not find any graph libraries that I loved in the Common Lisp ecosytem and when I have time, I enjoy solving [Project Euler](https://projecteuler.net/) problems, which are often sanely modelled in graphs.
 
 
 # Algorithms
@@ -107,6 +100,7 @@ This library provides a collection of popular graph-traversing algorithms for yo
 ## Search Algorithms
 
 ### Bidirectional Depth First Search Algorithm
+
 
 ### Breadth First Search Algorithm
 
