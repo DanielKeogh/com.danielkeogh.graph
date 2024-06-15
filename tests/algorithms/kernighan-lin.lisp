@@ -62,6 +62,7 @@
       (is-true (partition-eq (alexandria:hash-table-keys seta) (alexandria:hash-table-keys setb)
                              '(0 1 4) '(2 3))))))
 
+;; TODO: Fix this test?
 (test graph3
   (let* ((graph  (api:make-undirected-graph))
          (costs (make-hash-table)))
@@ -88,7 +89,5 @@
     
     (multiple-value-bind (seta setb val)
         (alg:kernighan-lin-partition graph 1 (lambda (e) (gethash e costs)))
-      (print (alexandria:hash-table-keys seta))
-      (print (alexandria:hash-table-keys setb))
       (is-true (partition-eq (alexandria:hash-table-keys seta) (alexandria:hash-table-keys setb)
                              '(0 1 2 3 6 9) '(4 5 7 8 10 11))))))
