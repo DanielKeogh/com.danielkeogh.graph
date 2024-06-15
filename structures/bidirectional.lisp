@@ -78,6 +78,9 @@
 ;; utils
 
 (defun edge-equal (graph edge source target)
+  (declare (type bidirectional-graph graph)
+           (type edge:edge edge)
+           (optimize (speed 3) (safety 0)))
   (let ((test (graph-vertex-equality-fn graph)))
     (and (funcall test source (edge:edge-source edge))
          (funcall test target (edge:edge-target edge)))))
@@ -85,23 +88,32 @@
 ;; api
 
 (defun has-vertex (graph vertex)
-  (declare (type bidirectional-graph graph))
+  (declare (type bidirectional-graph graph)
+           (optimize (speed 3) (safety 0)))
   (when (nth-value 1 (gethash vertex (graph-vertex-out-edges graph)))
     t)) ;; return boolean type for speed and to protect against memory leaks
 
 (defun has-edge (graph edge)
-  (declare (type bidirectional-graph graph))
-  (a:when-let (edges (gethash (edge:edge-source edge) (graph-vertex-out-edges graph)))
-    (find edge edges :test #'eql)))
+  (declare (type bidirectional-graph graph)
+           (type edge:edge edge)
+           (optimize (speed 3) (safety 0)))
+  (let ((edges (gethash (edge:edge-source edge) (graph-vertex-out-edges graph))))
+    (declare (type (or null list) edges))
+    (when edges
+      (find edge edges :test #'eql))))
 
 (defun has-edge-between (graph source target)
-  (declare (type bidirectional-graph graph))
-  (a:when-let (edges (gethash source (graph-vertex-out-edges graph)))
-    (loop for edge in edges
-            thereis (edge-equal graph edge source target))))
+  (declare (type bidirectional-graph graph)
+           (optimize (speed 3) (safety 0)))
+  (let ((edges (gethash source (graph-vertex-out-edges graph))))
+    (declare (type (or null list) edges))
+    (when edges
+      (loop for edge in edges
+              thereis (edge-equal graph edge source target)))))
 
 (defun add-vertex (graph vertex)
-  (declare (type bidirectional-graph graph))
+  (declare (type bidirectional-graph graph)
+           (optimize (speed 3) (safety 0)))
   (unless (has-vertex graph vertex)
     (setf (gethash vertex (graph-vertex-in-edges graph)) (make-edge-list)
           (gethash vertex (graph-vertex-out-edges graph)) (make-edge-list))))
@@ -124,19 +136,21 @@
 
 (defun add-edge (graph edge)
   (declare (type bidirectional-graph graph)
-           (type edge:edge edge))
+           (type edge:edge edge)
+           (optimize (speed 3) (safety 0)))
   (%add-edge graph edge))
 
 (defun add-edge-between (graph source target)
-  (declare (type bidirectional-graph graph))
+  (declare (type bidirectional-graph graph)
+           (optimize (speed 3) (safety 0)))
   (%add-edge graph (edge:make-edge source target)))
 
 (defun remove-edge (graph edge)
   (declare (type bidirectional-graph graph)
-           (type edge:edge edge))
-  (with-accessors ((out graph-vertex-out-edges)
-                   (in graph-vertex-in-edges))
-      graph
+           (type edge:edge edge)
+           (optimize (speed 3) (safety 0)))
+  (let ((out (graph-vertex-out-edges graph))
+        (in (graph-vertex-in-edges graph)))
     (edge:with-edge (source target) edge
       (ensure-vertex graph source)
       (ensure-vertex graph target)
@@ -144,20 +158,21 @@
             (gethash target in) (remove edge (gethash target in))))))
 
 (defun remove-edge-between (graph source target)
-  (declare (type bidirectional-graph graph))
+  (declare (type bidirectional-graph graph)
+           (optimize (speed 3) (safety 0)))
   (ensure-vertex graph source)
   (ensure-vertex graph target)
-  (with-accessors ((out graph-vertex-out-edges)
-                   (in graph-vertex-in-edges))
-      graph
+  (let ((out (graph-vertex-out-edges graph))
+        (in (graph-vertex-in-edges graph)))
     (let ((should-remove-edge (lambda (edge) (edge-equal graph edge source target))))
       (setf (gethash source out) (remove-if should-remove-edge (gethash source out))
             (gethash target in) (remove-if should-remove-edge (gethash target in))))))
 
 (defun remove-vertex (graph vertex)
-  (with-accessors ((in graph-vertex-in-edges)
-                   (out graph-vertex-out-edges))
-      graph
+  (declare (type bidirectional-graph graph)
+           (optimize (speed 3) (safety 0)))
+  (let ((in (graph-vertex-in-edges graph))
+        (out (graph-vertex-out-edges graph)))
     (loop for edge in (gethash vertex in)
           do (setf (gethash (edge:edge-source edge) out)
                    (remove edge (gethash (edge:edge-source edge) out))))
@@ -172,17 +187,20 @@
 ;;; utils
 
 (defun edges (graph)
-  (declare (type bidirectional-graph graph))
+  (declare (type bidirectional-graph graph)
+           (optimize (speed 3) (safety 0)))
   (loop for edge-collection being the hash-values of (graph-vertex-out-edges graph)
         nconc (copy-list edge-collection)))
 
 (defun vertices (graph)
-  (declare (type bidirectional-graph graph))
+  (declare (type bidirectional-graph graph)
+           (optimize (speed 3) (safety 0)))
   (loop for vertex being the hash-keys of (graph-vertex-out-edges graph)
         collect vertex))
 
 (defun out-edges (graph vertex)
-  (declare (type bidirectional-graph graph))
+  (declare (type bidirectional-graph graph)
+           (optimize (speed 3) (safety 0)))
   (gethash vertex (graph-vertex-out-edges graph)))
 
 (defun in-edges (graph vertex)
@@ -190,43 +208,50 @@
   (gethash vertex (graph-vertex-in-edges graph)))
 
 (defun vertex-count (graph)
-  (declare (type bidirectional-graph graph))
+  (declare (type bidirectional-graph graph)
+           (optimize (speed 3) (safety 0)))
   (hash-table-count (graph-vertex-out-edges graph)))
 
 (defun edge-count (graph)
-  (declare (type bidirectional-graph graph))
-  (loop for edge-collection being the hash-values of (graph-vertex-out-edges graph)
+  (declare (type bidirectional-graph graph)
+           (optimize (speed 3) (safety 0)))
+  (loop for edge-collection of-type list being the hash-values of (graph-vertex-out-edges graph)
         sum (length edge-collection)))
 
 ;;; looping without malloc
 
 (defun for-edges (graph fn)
   (declare (type bidirectional-graph graph)
-           (type function fn))
+           (type function fn)
+           (optimize (speed 3) (safety 1)))
   (loop for edge-collection being the hash-values of (graph-vertex-out-edges graph)
         do (loop for edge in edge-collection
                  do (funcall fn edge))))
 
 (defun for-vertices (graph fn)
   (declare (type bidirectional-graph graph)
-           (type function fn))
+           (type function fn)
+           (optimize (speed 3) (safety 1)))
   (loop for vertex being the hash-keys of (graph-vertex-out-edges graph)
         do (funcall fn vertex)))
 
 (defun for-out-edges (graph vertex fn)
   (declare (type bidirectional-graph graph)
-           (type function fn))
+           (type function fn)
+           (optimize (speed 3) (safety 1)))
   (loop for edge in (out-edges graph vertex)
         do (funcall fn edge)))
 
 (defun for-in-edges (graph vertex fn)
   (declare (type bidirectional-graph graph)
-           (type function fn))
+           (type function fn)
+           (optimize (speed 3) (safety 1)))
   (loop for edge in (in-edges graph vertex)
         do (funcall fn edge)))
 
 (defun for-in-out-edges (graph vertex fn)
   (declare (type bidirectional-graph graph)
-           (type function fn))
+           (type function fn)
+           (optimize (speed 3) (safety 1)))
   (for-in-edges graph vertex fn)
   (for-out-edges graph vertex fn))
