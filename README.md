@@ -6,7 +6,9 @@ This library contains graph datastructures and algorithms.
 
 [What is a graph?](#what-is-a-graph)
 
-[API](#api)
+[Graph API](#graph-api)
+
+[Algorithms API](#algorithms-api)
 
 [History and inspiration](#history-and-inspiration)
 
@@ -82,7 +84,7 @@ An undirected graph in which every vertex is connected to every other vertex by 
 
 [Graph Partioning](https://en.wikipedia.org/wiki/Graph_partition) is the process of dividing a graph into smaller sub-graphs by grouping sets of related vertices into a single vertex. The edges connecting the grouped vertices ot other vertices are maintained. A well-known algorithm for graph partitioning is the [Kernighan-Lin algorithm](#kerninghan-lin-algorithm).
 
-# API
+# Graph API
 
 ## Constructors
 
@@ -430,14 +432,7 @@ Will be thrown when a method cannot be implemented by a given graph type. This i
 
 The `supported-by` slot describes the types that are supported by the method as a helpful hint.
 
-# History and inspiration
-
-This library has largely been inspired by the library [QuikGraph](https://github.com/KeRNeLith/QuikGraph), with many ideas and algorithms ripped from it wholesale.
-
-I wrote this library because I could not find any graph libraries that I loved in the Common Lisp ecosytem and when I have time, I enjoy solving [Project Euler](https://projecteuler.net/) problems, which are often sanely modelled in graphs.
-
-
-# Algorithms
+# Algorithms API
 
 This library provides a collection of popular graph-traversing algorithms for your convenience.
 
@@ -472,3 +467,10 @@ TODO: Decide whether or not condensation just belongs under (Connnected Componen
 ## Graph Partition Algorithms
 
 ### Kerninghan-Lin Algorithm
+
+# History and inspiration
+
+This library has largely been inspired by the library [QuikGraph](https://github.com/KeRNeLith/QuikGraph), with many ideas and algorithms ripped from it wholesale.
+
+I wrote this library because I could not find any graph libraries that I loved in the Common Lisp ecosytem and when I have time, I enjoy solving [Project Euler](https://projecteuler.net/) problems, which are often sanely modelled in graphs.
+
