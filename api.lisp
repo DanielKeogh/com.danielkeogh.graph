@@ -88,7 +88,8 @@
 
 ;; builders
 
-(defgeneric add-vertex (graph v))
+(defgeneric add-vertex (graph vertex)
+  (:documentation "Add a vertex to a graph."))
 
 (defgeneric add-edge (graph edge)
   (:documentation "Add an edge to a graph. Will error if the edge refers to a vertex that is not yet added to the graph."))
