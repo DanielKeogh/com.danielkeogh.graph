@@ -30,12 +30,11 @@ Create and manipulate graphs like this:
 
 The `com.danielkeogh.graph` system consists of multiple packages. These are as follows:
 
+#### `com.danielkeogh.graph`
 
-## `com.danielkeogh.graph` 
+The main API for building and traversing graphs.
 
-The main API for building and traversing graphs. 
-
-## `com.danielkeogh.graph.algorithms`
+#### `com.danielkeogh.graph.algorithms`
 
 A collection of useful algorithms that can be used against graphs that implement the API.
 
@@ -494,4 +493,3 @@ TODO: Decide whether or not condensation just belongs under (Connnected Componen
 This library has largely been inspired by the library [QuikGraph](https://github.com/KeRNeLith/QuikGraph), with many ideas and algorithms ripped from it wholesale.
 
 I wrote this library because I could not find any graph libraries that I loved in the Common Lisp ecosytem and when I have time, I enjoy solving [Project Euler](https://projecteuler.net/) problems, which are often sanely modelled in graphs.
-
