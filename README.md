@@ -28,6 +28,27 @@ Create and manipulate graphs like this:
   (g:add-edge graph 0 1))
 ```
 
+The `com.danielkeogh.graph` system consists of multiple packages. These are as follows:
+
+
+## `com.danielkeogh.graph` 
+
+The main API for building and traversing graphs. 
+
+## `com.danielkeogh.graph.algorithms`
+
+A collection of useful algorithms that can be used against graphs that implement the API.
+
+## Structure specific packages
+
+Each graph implementation also has its own package that you can use if you want to avoid the performance overhead of using generics in the main API. These are often compiled with `(declare (optimize (speed 3) (safety 0)))`, and so not recommended by default.
+
+* `com.danielkeogh.graph.adjacency`
+* `com.danielkeogh.graph.bidirectional`
+* `com.danielkeogh.graph.bidirectional-matrix`
+* `com.danielkeogh.graph.undirected`
+* `com.danielkeogh.graph.edge`
+
 # What is a graph?
 
 A graph is a datastructure that represents connections between nodes. In [graph theory](https://en.wikipedia.org/wiki/Graph_theory) these nodes are called [vertices](#vertex) and the links between them are called [edges](#edge).
