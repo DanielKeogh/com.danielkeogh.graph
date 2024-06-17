@@ -65,6 +65,7 @@
   "Count"
   (alexandria:with-gensyms (count arg)
     `(let ((,count 0))
+       (declare (type fixnum ,count))
        (labels ((,counter-fn (,arg)
                   (when ,arg
                     (incf ,count))))

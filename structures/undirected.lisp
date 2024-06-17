@@ -57,6 +57,7 @@
 (defun make-graph (&key
                      (allow-parallel-edges t)
                      (vertex-equality-fn #'eql))
+  (declare #.utils:*internal-optimize-settings*)
   (make-undirected-graph
    :allow-parallel-edges allow-parallel-edges
    :vertex-edges (make-hash-table :test vertex-equality-fn)
@@ -74,6 +75,9 @@
 ;; utils
 
 (defun edge-equal (graph edge source target)
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type undirected-graph graph))
+  (declare (type edge:edge edge))
   (let ((test (graph-vertex-equality-fn graph)))
     (or (and (funcall test source (edge:edge-source edge))
              (funcall test target (edge:edge-target edge)))
@@ -83,30 +87,38 @@
 ;; api
 
 (defun has-vertex (graph vertex)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type undirected-graph graph))
   (when (nth-value 1 (gethash vertex (graph-vertex-edges graph)))
     t)) ;; return boolean type for speed and to protect against memory leaks
 
 (defun has-edge (graph edge)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type undirected-graph graph))
-  (a:when-let (edges (gethash (edge:edge-source edge) (graph-vertex-edges graph)))
-    (find edge edges :test #'eql)))
+  (let ((edges (gethash (edge:edge-source edge) (graph-vertex-edges graph))))
+    (declare (type (or list null) edges))
+    (when edges
+        (find edge edges :test #'eql))))
 
 (defun has-edge-between (graph source target)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type undirected-graph graph))
-  (a:when-let (edges (gethash source (graph-vertex-edges graph)))
-    (loop for edge in edges
-            thereis (edge-equal graph edge source target))))
+  (let ((edges (gethash source (graph-vertex-edges graph))))
+    (declare (type (or list null) edges))
+    (when edges
+      (loop for edge in edges
+              thereis (edge-equal graph edge source target)))))
 
 (defun add-vertex (graph vertex)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type undirected-graph graph))
   (unless (has-vertex graph vertex)
     (setf (gethash vertex (graph-vertex-edges graph)) (make-edge-list))))
 
 (defun %add-edge (graph edge)
-  (declare (type undirected-graph graph)
-           (type edge:edge edge)
-           (optimize (speed 3) (safety 0)))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type undirected-graph graph))
+  (declare (type edge:edge edge))
   (labels ((add-edge-to-hash (hashtable vertex edge)
              (push edge (gethash vertex hashtable))))
     (let ((source (edge:edge-source edge))
@@ -121,19 +133,21 @@
         edge))))
 
 (defun add-edge (graph edge)
-  (declare (type undirected-graph graph)
-           (type edge:edge edge))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type undirected-graph graph))
+  (declare (type edge:edge edge))
   (%add-edge graph edge))
 
 (defun add-edge-between (graph source target)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type undirected-graph graph))
   (%add-edge graph (edge:make-edge source target)))
 
 (defun remove-edge (graph edge)
-  (declare (type undirected-graph graph)
-           (type edge:edge edge))
-  (with-accessors ((edgemap graph-vertex-edges))
-      graph
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type undirected-graph graph))
+  (declare (type edge:edge edge))
+  (let ((edgemap (graph-vertex-edges graph)))
     (edge:with-edge (source target) edge
       (ensure-vertex graph source)
       (ensure-vertex graph target)
@@ -141,16 +155,18 @@
             (gethash target edgemap) (remove edge (gethash target edgemap))))))
 
 (defun remove-edge-between (graph source target)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type undirected-graph graph))
   (ensure-vertex graph source)
   (ensure-vertex graph target)
-  (with-accessors ((edgemap graph-vertex-edges))
-      graph
-    (let ((should-remove-edge (lambda (edge) (edge-equal graph edge source target))))
-      (setf (gethash source edgemap) (remove-if should-remove-edge (gethash source edgemap))
-            (gethash target edgemap) (remove-if should-remove-edge (gethash target edgemap))))))
+  (let ((edgemap (graph-vertex-edges graph))
+        (should-remove-edge (lambda (edge) (edge-equal graph edge source target))))
+    (setf (gethash source edgemap) (remove-if should-remove-edge (gethash source edgemap))
+          (gethash target edgemap) (remove-if should-remove-edge (gethash target edgemap)))))
 
 (defun remove-vertex (graph vertex)
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type undirected-graph graph))
   (let* ((edgemap (graph-vertex-edges graph))
          (edges (gethash vertex edgemap)))
     (remhash vertex edgemap)
@@ -163,8 +179,9 @@
 ;;; looping without malloc
 
 (defun for-edges (graph fn)
-  (declare (type undirected-graph graph)
-           (type function fn))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type undirected-graph graph))
+  (declare (type function fn))
   (maphash (lambda (vertex edges)
              (dolist (edge edges)
                (when (eq (edge:edge-source edge) vertex)
@@ -172,38 +189,45 @@
            (graph-vertex-edges graph)))
 
 (defun for-vertices (graph fn)
-  (declare (type undirected-graph graph)
-           (type function fn))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type undirected-graph graph))
+  (declare (type function fn))
   (loop for vertex being the hash-keys of (graph-vertex-edges graph)
         do (funcall fn vertex)))
 
 (defun for-adjacent-edges (graph vertex fn)
-  (declare (type undirected-graph graph)
-           (type function fn))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type undirected-graph graph))
+  (declare (type function fn))
   (loop for edge in (adjacent-edges graph vertex)
         do (funcall fn edge)))
 
 ;;; utils
 
 (defun edges (graph)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type undirected-graph graph))
   (utils:with-collector (collect)
     (for-edges graph #'collect)))
 
 (defun vertices (graph)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type undirected-graph graph))
   (loop for vertex being the hash-keys of (graph-vertex-edges graph)
         collect vertex))
 
 (defun adjacent-edges (graph vertex)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type undirected-graph graph))
   (gethash vertex (graph-vertex-edges graph)))
 
 (defun vertex-count (graph)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type undirected-graph graph))
   (hash-table-count (graph-vertex-edges graph)))
 
 (defun edge-count (graph)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type undirected-graph graph))
   (utils:with-counter (cnt)
     (for-edges graph #'cnt)))
