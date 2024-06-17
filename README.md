@@ -30,11 +30,11 @@ Create and manipulate graphs like this:
 
 The `com.danielkeogh.graph` system consists of multiple packages. These are as follows:
 
-#### `com.danielkeogh.graph`
+#### com.danielkeogh.graph
 
 The main API for building and traversing graphs.
 
-#### `com.danielkeogh.graph.algorithms`
+#### com.danielkeogh.graph.algorithms
 
 A collection of useful algorithms that can be used against graphs that implement the API.
 
