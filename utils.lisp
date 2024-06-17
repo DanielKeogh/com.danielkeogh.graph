@@ -3,36 +3,26 @@
 (defpackage #:com.danielkeogh.graph.utils
   (:use #:cl)
   (:export
-   #:required-argument
-   #:let-with-string-streams
+   ;; Optimization Settings
+   #:*internal-optimize-settings*
+   #:*external-optimize-settings*
+   ;; Collectors
    #:with-collector
    #:with-maximizer
    #:with-minimizer
-   #:with-counter))
+   #:with-counter
+   ;; Other
+   #:required-argument
+   #:let-with-string-streams))
 
 (in-package #:com.danielkeogh.graph.utils)
 
-(defun required-argument (name)
-  (alexandria:required-argument name))
+;; Optimization
 
-(defmacro let-with-string-streams (vars with-streams &body body)
-  "Creating a bunch of nested `with-output-to-string` and then binding them to separate variables is a pain.
-This macro takes that pain away! You can use it like this:
-```
-(utils:let-with-string-streams (s1 s2)
-   (progn (princ \"foo\" s1)
-          (princ \"bar\" s2))
-   (values s1 s2))
-```
-"
-  `(let (,@vars)
-     ,(loop for var in vars
-            for result = `(setf ,var (with-output-to-string (,var)
-                                       ,with-streams))
-              then `(setf ,var (with-output-to-string (,var)
-                                  ,result))
-        finally (return result))  
-     ,@body))
+(defvar *internal-optimize-settings* '(optimize (speed 3) (debug 0) (safety 0)))
+(defvar *external-optimize-settings* '(optimize (speed 3) (debug 0) (safety 3)))
+
+;; Collectors
 
 (defmacro with-collector ((collection-fn-name) &body body)
   "Collect a list"
@@ -80,3 +70,27 @@ This macro takes that pain away! You can use it like this:
                     (incf ,count))))
          ,@body)
        ,count)))
+
+;; Other utils
+
+(defun required-argument (name)
+  (alexandria:required-argument name))
+
+(defmacro let-with-string-streams (vars with-streams &body body)
+  "Creating a bunch of nested `with-output-to-string` and then binding them to separate variables is a pain.
+This macro takes that pain away! You can use it like this:
+```
+(utils:let-with-string-streams (s1 s2)
+   (progn (princ \"foo\" s1)
+          (princ \"bar\" s2))
+   (values s1 s2))
+```
+"
+  `(let (,@vars)
+     ,(loop for var in vars
+            for result = `(setf ,var (with-output-to-string (,var)
+                                       ,with-streams))
+              then `(setf ,var (with-output-to-string (,var)
+                                  ,result))
+        finally (return result))  
+     ,@body))
