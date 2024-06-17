@@ -55,8 +55,9 @@
 ;; constructors
 
 (defun make-graph (vertex-count)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type fixnum vertex-count))
-  (assert (> vertex-count 0))
+  (check-type vertex-count (integer 0 #.most-positive-fixnum))
   (make-bidirectional-matrix-graph
    :vertex-count vertex-count
    :edges (make-array (list vertex-count vertex-count)
@@ -66,21 +67,25 @@
 ;; api
 
 (defun has-vertex (graph vertex)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type bidirectional-matrix-graph graph))
+  (declare (type fixnum vertex))
   (< vertex (graph-vertex-count graph)))
 
 (defun has-edge-between (graph source target)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type bidirectional-matrix-graph graph))
   (aref (graph-edges graph) source target))
 
 (defun has-edge (graph edge)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type bidirectional-matrix-graph graph))
   (has-edge-between graph (edge:edge-source edge) (edge:edge-target edge)))
 
 (defun %add-edge (graph edge)
-  (declare (type bidirectional-matrix-graph graph)
-           (type edge:edge edge)
-           (optimize (speed 3) (safety 0)))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type bidirectional-matrix-graph graph))
+  (declare (type edge:edge edge))
   (let ((source (edge:edge-source edge))
         (target (edge:edge-target edge)))
     (when (aref (graph-edges graph) source target)
@@ -90,31 +95,36 @@
     edge))
 
 (defun add-edge (graph edge)
-  (declare (type bidirectional-matrix-graph graph)
-           (type edge:edge edge))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type bidirectional-matrix-graph graph))
+  (declare (type edge:edge edge))
   (%add-edge graph edge))
 
 (defun add-edge-between (graph source target)
-  (declare (type bidirectional-matrix-graph graph)
-           (type fixnum source target))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type bidirectional-matrix-graph graph))
+  (declare (type fixnum source target))
   (%add-edge graph (edge:make-edge source target)))
 
 (defun remove-edge-between (graph source target)
-  (declare (type bidirectional-matrix-graph graph)
-           (type fixnum source target))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type bidirectional-matrix-graph graph))
+  (declare (type fixnum source target))
   (when (aref (graph-edges graph) source target) 
     (setf (aref (graph-edges graph) source target) nil)
     (decf (graph-edge-count graph))
-    t)
-  )
+    t))
+
 (defun remove-edge (graph edge)
-  (declare (type bidirectional-matrix-graph graph)
-           (type edge:edge edge))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type bidirectional-matrix-graph graph))
+  (declare (type edge:edge edge))
   (remove-edge-between graph (edge:edge-source edge) (edge:edge-target edge)))
 
 ;; utils
 
 (defun edges (graph)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type bidirectional-matrix-graph graph))
   (loop for source below (graph-vertex-count graph)
         nconc (loop for target below (graph-vertex-count graph)
@@ -127,12 +137,14 @@
         collect i))
 
 (defun out-edges (graph vertex)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type bidirectional-matrix-graph graph))
   (loop for target below (graph-vertex-count graph)
         for edge = (aref (graph-edges graph) vertex target)
         when edge collect edge))
 
 (defun in-edges (graph vertex)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type bidirectional-matrix-graph graph))
   (loop for source below (graph-vertex-count graph)
         for edge = (aref (graph-edges graph) source vertex)
@@ -143,14 +155,16 @@
   (graph-vertex-count graph))
 
 (defun edge-count (graph)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (type bidirectional-matrix-graph graph))
   (graph-edge-count graph))
 
 ;; looping without malloc
 
 (defun for-edges (graph fn)
-  (declare (type bidirectional-matrix-graph graph)
-           (type function fn))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type bidirectional-matrix-graph graph))
+  (declare (type function fn))
   (dotimes (source (graph-vertex-count graph))
     (dotimes (target (graph-vertex-count graph))
       (let ((edge (aref (graph-edges graph) source target)))
@@ -158,31 +172,36 @@
           (funcall fn edge))))))
 
 (defun for-vertices (graph fn)
-  (declare (type bidirectional-matrix-graph graph)
-           (type function fn))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type bidirectional-matrix-graph graph))
+  (declare (type function fn))
   (dotimes (i (graph-vertex-count graph))
     (funcall fn i)))
 
 (defun for-out-edges (graph vertex fn)
-  (declare (type bidirectional-matrix-graph graph)
-           (type function fn))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type bidirectional-matrix-graph graph))
+  (declare (type function fn))
   (dotimes (target (graph-vertex-count graph))
     (let ((edge (aref (graph-edges graph) vertex target)))
       (when edge (funcall fn edge)))))
 
 (defun for-in-edges (graph vertex fn)
-  (declare (type bidirectional-matrix-graph graph)
-           (type function fn))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type bidirectional-matrix-graph graph))
+  (declare (type function fn))
   (dotimes (source (graph-vertex-count graph))
     (let ((edge (aref (graph-edges graph) source vertex)))
       (when edge (funcall fn edge)))))
 
 (defun for-in-out-eges (graph vertex fn)
-  (declare (type bidirectional-matrix-graph graph)
-           (type function fn))
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type bidirectional-matrix-graph graph))
+  (declare (type function fn))
   (for-in-edges graph vertex fn)
   (for-out-edges graph vertex fn))
  
 (defun graph-vertex-equality-fn (graph)
+  (declare #.utils:*internal-optimize-settings*)
   (declare (ignore graph))
   #'=)
