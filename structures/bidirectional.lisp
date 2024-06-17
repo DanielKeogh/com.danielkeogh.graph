@@ -57,6 +57,10 @@
 
 ;;; constructors
 
+(declaim (ftype (function (&key (:allow-parallel-edges boolean)
+                                (:vertex-equality-fn (function (t t) boolean)))
+                          (values bidirectional-graph &optional))
+                make-graph))
 (defun make-graph (&key
                      (allow-parallel-edges t)
                      (vertex-equality-fn #'eql))
@@ -278,7 +282,7 @@
 
 ;;; looping without malloc
 
-(declaim (ftype (function (bidirectional-graph (function (edge:edge) *))
+(declaim (ftype (function (bidirectional-graph (function (edge:edge)))
                           (values null &optional))
                 for-edges))
 (defun for-edges (graph fn)
@@ -289,7 +293,7 @@
         do (loop for edge in edge-collection
                  do (funcall fn edge))))
 
-(declaim (ftype (function (bidirectional-graph (function (t) *))
+(declaim (ftype (function (bidirectional-graph (function (t)))
                           (values null &optional))
                 for-vertices))
 (defun for-vertices (graph fn)
@@ -299,7 +303,7 @@
   (loop for vertex being the hash-keys of (graph-vertex-out-edges graph)
         do (funcall fn vertex)))
 
-(declaim (ftype (function (bidirectional-graph t (function (edge:edge) *))
+(declaim (ftype (function (bidirectional-graph t (function (edge:edge)))
                           (values null &optional))
                 for-out-edges))
 (defun for-out-edges (graph vertex fn)
@@ -309,7 +313,7 @@
   (loop for edge in (out-edges graph vertex)
         do (funcall fn edge)))
 
-(declaim (ftype (function (bidirectional-graph t (function (edge:edge) *))
+(declaim (ftype (function (bidirectional-graph t (function (edge:edge)))
                           (values null &optional))
                 for-in-edges))
 (defun for-in-edges (graph vertex fn)
@@ -319,7 +323,7 @@
   (loop for edge in (in-edges graph vertex)
         do (funcall fn edge)))
 
-(declaim (ftype (function (bidirectional-graph t (function (edge:edge) *))
+(declaim (ftype (function (bidirectional-graph t (function (edge:edge)))
                           (values null &optional))
                 for-in-out-edges))
 (defun for-in-out-edges (graph vertex fn)
