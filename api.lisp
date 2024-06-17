@@ -170,12 +170,15 @@
 
 ;; edge
 
+(declaim (ftype (function (t t) (values edge:edge &optional)) make-edge))
 (defun make-edge (source target)
   (declare #.utils:*external-optimize-settings*)
   (edge:make-edge source target))
 
 ;; adjacency
 
+(declaim (ftype (function * (values adjacency:adjacency-graph &optional))
+                make-adjacency-graph))
 (defun make-adjacency-graph (&key (allow-parallel-edges t) (vertex-equality-fn #'eql))
   (declare #.utils:*external-optimize-settings*)
   (adjacency:make-graph :allow-parallel-edges allow-parallel-edges :vertex-equality-fn vertex-equality-fn))
@@ -250,6 +253,8 @@
 
 ;; bidirectional
 
+(declaim (ftype (function * (values bidirectional:bidirectional-graph &optional))
+                make-bidirectional-graph))
 (defun make-bidirectional-graph (&key (allow-parallel-edges t) (vertex-equality-fn #'eql))
   (declare #.utils:*external-optimize-settings*)
   (bidirectional:make-graph :allow-parallel-edges allow-parallel-edges :vertex-equality-fn vertex-equality-fn))
@@ -324,6 +329,9 @@
 
 ;; bidirectional-matrix
 
+(declaim (ftype (function * (values bidirectional-matrix:bidirectional-matrix-graph
+                                    &optional))
+                make-bidirectional-matrix-graph))
 (defun make-bidirectional-matrix-graph (vertex-count)
   (declare #.utils:*external-optimize-settings*)
   (bidirectional-matrix:make-graph vertex-count))
@@ -399,6 +407,8 @@
 
 ;; undirected
 
+(declaim (ftype (function * (values undirected:undirected-graph &optional))
+                make-undirected-graph))
 (defun make-undirected-graph (&key
                                 (allow-parallel-edges t)
                                 (vertex-equality-fn #'eql))
