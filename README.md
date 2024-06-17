@@ -458,7 +458,29 @@ This library provides a collection of popular graph-traversing algorithms for yo
 
 ## Search Algorithms
 
-### Bidirectional Depth First Search Algorithm
+### Bidirectional Breadth First Search Algorithm
+
+Visit vertices in a directed graph by visiting all of a vertices edges first, then all edges connected to those vertices, and then all vertices connected to those vertices, and so-on.
+
+As this is bidirectional it traverses both in and out edges of each vertex.
+
+```lisp
+(function (directed-graph &key
+    (:root-vertex vertex)
+    (:queue-size fixnum)
+    (:on-discover-vertex-fn (function (vertex)))
+    (:on-examine-vertex-fn (function (vertex)))
+    (:on-vertex-finished-fn (function (vertex)))
+    (:on-gray-target-fn (function (edge:edge)))
+    (:on-black-target-fn (function (edge:edge)))))
+```
+* `:root-vertex` The starting vertex. If root vertex is nil, all vertices will be searched, otherwise, vertices not connected to the root vertex will not be visited.
+* `:queue-size` The maximum size of the queue of unvisited vertices.
+* `:on-discover-vertex-fn` Is called the first time a vertex is found.
+* `:on-examine-vertex-fn` Is called before a vertexes edges are visited.
+* `:on-vertex-finished-fn` Is called after all edges of a vertex have been visisted.
+* `:on-gray-target-fn` Is called for each edge that is visited where the next vertex has no yet been visited.
+* `:on-black-target-fn` Is called for each edge that is visited where the next vertex has already finished being visited.
 
 ### Breadth First Search Algorithm
 
