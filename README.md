@@ -506,6 +506,30 @@ Visit vertices in a directed graph by visiting all of a vertices `out-edges`, th
 
 ### Depth First Search Algorithm
 
+Visit vertices in a directed graph recursively traversing each out edge of a given vertex.
+```lisp
+(function (directed-graph &key
+    (:root-vertex vertex)
+    (:process-all-vertices boolean)
+    (:max-depth most-positive-fixnum)
+    (:on-start-vertex-fn (function (vertex)))
+    (:on-tree-edge-fn (function (edge:edge)))
+    (:on-discover-vertex-fn (function (vertex)))
+    (:on-back-edge-fn (function (edge:edge)))
+    (:on-forward-or-cross-edge-fn (function (edge:edge)))
+    (:on-vertex-finished-fn (function (vertex)))))
+```
+
+* `:root-vertex` The starting vertex. If root vertex is nil, all vertices will be searched, otherwise, vertices that are not connected via the out edges of the root vertex will not be visited.
+* `:process-all-vertices` If `:root-vertex` is nil, this option does not apply. Otherwise, setting this to truu will guarantee all vertices are visited by `depth-first-search` even if they are not connected to the `:root-vertex`.
+* `:max-depth` a fixnum indicating how many times the search will recur before it stops searching.
+* `:on-start-vertex-fn` This function is applied to each root vertex chosen as the starting vertex for the search.
+* `:on-tree-edge-fn` a function applied to each edge, the first time it is visited.
+* `:on-discover-vertex-fn` a function applied to a vertex, each time it is visited.
+* `:on-back-edge-fn` a function applied to an edge if it is visited whilst the search is looking at out-edges of this edge already. This can be used to detect loops.
+* `:on-forward-or-cross-edge-fn` a function applied to an edge when it is visited, but the algorithm has already searched it and all of it's `out-edges`.
+* `:on-vertex-finished` a function applied to an edge when all of its out-edges have been searched.
+
 ## Connected Components Algorithms
 
 ### Strongly Connected Components Algorithm
