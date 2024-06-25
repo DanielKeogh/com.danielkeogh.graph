@@ -534,13 +534,41 @@ Visit vertices in a directed graph recursively traversing each out edge of a giv
 
 ### Strongly Connected Components Algorithm
 
+Find the sets of strongly connected vertices in a directed graph.
+
+```lisp
+(function (directed-graph))
+```
+Result is `(values hash-table count)`, where:
+
+* `hash-table` keys are vertices and the values are positive fixnums that indicate which strongly-connected group each vertex is in. Each unique fixnum value is a set of one or more strongly connected vertices.
+* `count` is the number of of groups.
+
 Also see [utilities](#connected-components-algorithm-utilities) for convience functions related to this algorithm.
 
 ### Weakly Connected Components Algorithm
 
+Find the sets of weakly connected vertices in a directed graph.
+
+```lisp
+(function (directed-graph))
+```
+Result is `(values hash-table count)`, where:
+
+* `hash-table` keys are vertices and the values are positive fixnums that indicate which strongly-connected group each vertex is in. Each unique fixnum value is a set of one or more weakly connected vertices.
+* `count` is the number of of groups.
+
 Also see [utilities](#connected-components-algorithm-utilities) for convience functions related to this algorithm.
 
 ### Connected Components Algorithm Utilities
+
+#### `conneced-components->graphs`
+
+Create a vector containing sub-graphs for given of connected components.
+
+* `source-graph`: The original graph a connected components algorithm was applied to
+* `components`: A hash-table where each key is a vertex and each value is a fixnum representing which group the vertex is in.
+* `component-count`: The number of unique groups in components.
 
 ## Condensation Algorithms
 

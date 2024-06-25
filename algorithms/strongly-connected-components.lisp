@@ -2,7 +2,10 @@
 
 (in-package :com.danielkeogh.graph.algorithms)
 
+(declaim (ftype (function (t) (values hash-table fixnum &optional))
+                strongly-connected-components))
 (defun strongly-connected-components (graph)
+  (declare #.utils:*internal-optimize-settings*)
   (let* ((dfs-time 0)
          (component-count 0)
          (steps 0)
@@ -13,10 +16,12 @@
          (components-per-step (list))
          (vertices-per-step (list))
          (stack (list)))
+    (declare (type (function (t t) boolean) vertex-eq-fn))
+    (declare (type fixnum steps dfs-time component-count))
     (labels ((vertex-eq (vertex1 vertex2) (funcall vertex-eq-fn vertex1 vertex2))
              (min-discover-time (vertex1 vertex2)
-               (if (< (gethash vertex1 discover-times)
-                      (gethash vertex2 discover-times))
+               (if (< (the fixnum (gethash vertex1 discover-times))
+                      (the fixnum (gethash vertex2 discover-times)))
                    vertex1
                    vertex2))
              (on-discover-vertex (vertex)
@@ -32,7 +37,7 @@
              (on-vertex-finished (vertex)
                (loop for edge in (graph:out-edges graph vertex)
                      for target = (graph:edge-target edge)
-                     when (= most-positive-fixnum (gethash target components))
+                     when (= most-positive-fixnum (the fixnum (gethash target components)))
                        do (setf (gethash vertex roots) (min-discover-time (gethash vertex roots)
                                                                           (gethash target roots))))
 
