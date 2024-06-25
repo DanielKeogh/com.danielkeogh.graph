@@ -9,6 +9,18 @@
   (edges (utils:required-argument "edges") :read-only t)
   (depth (utils:required-argument "depth") :read-only t))
 
+(declaim (ftype (function (t &key
+                             (:root-vertex t)
+                             (:process-all-vertices t)
+                             (:max-depth fixnum)
+                             (:on-start-vertex-fn (function (t)))
+                             (:on-tree-edge-fn (function (edge:edge)))
+                             (:on-discover-vertex-fn (function (t)))
+                             (:on-back-edge-fn (function (edge:edge)))
+                             (:on-forward-or-cross-edge-fn (function (edge:edge)))
+                             (:on-vertex-finished-fn (function (t))))
+                          (values null &optional))
+                depth-first-search))
 (defun depth-first-search (graph
                            &key
                              (root-vertex nil)
@@ -20,7 +32,7 @@
                              (on-back-edge-fn #'identity)
                              (on-forward-or-cross-edge-fn #'identity)
                              (on-vertex-finished-fn #'identity))
-
+  (declare #.utils:*internal-optimize-settings*)
   (let ((vertex-colors (make-hash-table :test (graph:graph-vertex-equality-fn graph))))
     (labels ((out-edges (vertex)
                (graph:out-edges graph vertex))
@@ -35,6 +47,7 @@
                                 (depth (sf-depth frame))
                                 (u (sf-vertex frame))
                                 (edges (sf-edges frame)))
+                           (declare (type fixnum depth))
                            (when (> depth max-depth)
                              (setf (gethash u vertex-colors) :black)
                              (continue))
