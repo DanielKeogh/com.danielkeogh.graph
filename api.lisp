@@ -102,11 +102,11 @@
 
 (defgeneric remove-edge-between (graph vertex1 vertex2)
   (declare #.utils:*external-optimize-settings*)
-  (:documentation "Remove all edges edge between two vertexes"))
+  (:documentation "Remove all edges edge between two vertexes."))
 
 (defgeneric remove-edge (graph edge)
   (declare #.utils:*external-optimize-settings*)
-  (:documentation "Remove all edges edge between two vertexes"))
+  (:documentation "Remove all edges edge between two vertexes."))
 
 ;; graph accessors
 
@@ -138,19 +138,19 @@
 
 (defgeneric graph-vertex-equality-fn (graph)
   (declare #.utils:*external-optimize-settings*)
-  (:documentation "Get the function that checks if two vertices in the graph are the same"))
+  (:documentation "Get the function that checks if two vertices in the graph are the same."))
 
 (defgeneric vertex-count (graph)
   (declare #.utils:*external-optimize-settings*)
-  (:documentation "Total count of vertexes in the graph"))
+  (:documentation "Total count of vertexes in the graph."))
 
 (defgeneric edge-count (graph)
   (declare #.utils:*external-optimize-settings*)
-  (:documentation "Total count of edges in the graph"))
+  (:documentation "Total count of edges in the graph."))
 
 (defgeneric is-directed (graph)
   (declare #.utils:*external-optimize-settings*)
-  (:documentation "Is it a directed graph?"))
+  (:documentation "Check if a graph is directed."))
 
 ;;; unsupported
 
