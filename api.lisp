@@ -172,6 +172,7 @@
 
 (declaim (ftype (function (t t) (values edge:edge &optional)) make-edge))
 (defun make-edge (source target)
+  "Create an edge between two vertices. This edge may be used in both directed and undirected graphs."
   (declare #.utils:*external-optimize-settings*)
   (edge:make-edge source target))
 
@@ -180,6 +181,7 @@
 (declaim (ftype (function * (values adjacency:adjacency-graph &optional))
                 make-adjacency-graph))
 (defun make-adjacency-graph (&key (allow-parallel-edges t) (vertex-equality-fn #'eql))
+  "Create a directed graph optimized for `out-edges` access."
   (declare #.utils:*external-optimize-settings*)
   (adjacency:make-graph :allow-parallel-edges allow-parallel-edges :vertex-equality-fn vertex-equality-fn))
 
@@ -256,6 +258,7 @@
 (declaim (ftype (function * (values bidirectional:bidirectional-graph &optional))
                 make-bidirectional-graph))
 (defun make-bidirectional-graph (&key (allow-parallel-edges t) (vertex-equality-fn #'eql))
+  "Create a directed graph optimized for `out-edges` and `in-edges` access."
   (declare #.utils:*external-optimize-settings*)
   (bidirectional:make-graph :allow-parallel-edges allow-parallel-edges :vertex-equality-fn vertex-equality-fn))
 
@@ -333,6 +336,7 @@
                                     &optional))
                 make-bidirectional-matrix-graph))
 (defun make-bidirectional-matrix-graph (vertex-count)
+  "Create a graph with pre-populated vertices optimized for checking if a given edge exists. Vertices are represented as `fixnum` from 0 below `vertex-count`."
   (declare #.utils:*external-optimize-settings*)
   (bidirectional-matrix:make-graph vertex-count))
 
@@ -412,6 +416,7 @@
 (defun make-undirected-graph (&key
                                 (allow-parallel-edges t)
                                 (vertex-equality-fn #'eql))
+  "Create an undirected graph optimized for finding edges of a given vertex quickly."
   (declare #.utils:*external-optimize-settings*)
   (undirected:make-graph :allow-parallel-edges allow-parallel-edges
                          :vertex-equality-fn vertex-equality-fn))
@@ -483,29 +488,33 @@
 ;; edge accessors
 
 (defun edge-source (edge)
+  "Find the source vertex of an edge. For undirected graphs the orientation is arbitrary."
   (declare #.utils:*external-optimize-settings*)
   (edge:edge-source edge))
 
 (defun edge-target (edge)
+  "Find the target vertex of an edge. For undirected graphs the orientation is arbitrary."
   (declare #.utils:*external-optimize-settings*)
   (edge:edge-target edge))
 
 ;; utils
 
 (defun add-vertices (graph &rest vertices)
+  "Add a set of vertices to a graph."
   (declare #.utils:*external-optimize-settings*)
   (dolist (vertex vertices)
     (add-vertex graph vertex)))
 (trivial-indent:define-indentation add-vertices (4 &body))
 
 (defun add-edges (graph &rest edges)
+  "Add a set of edges to a graph."
   (declare #.utils:*external-optimize-settings*)
   (dolist (edge edges)
     (add-edge graph edge)))
 (trivial-indent:define-indentation add-edges (4 &body))
 
 (defun add-edges-and-vertices (graph &rest edges)
-  "Add a collection of edges to the graph, ensuring that their vertices are also added"
+  "Add a collection of edges to the graph, ensuring that their vertices are also added."
   (declare #.utils:*external-optimize-settings*)
   (dolist (edge edges)
     (let ((source (edge-source edge))
@@ -517,6 +526,7 @@
 (trivial-indent:define-indentation add-edges-and-vertices (4 &body))
 
 (defun add-edges-and-vertices-between (graph &rest pairs)
+  "Convert a p-list into a set of edges and add all of these edges to a graph, ensuring their vertices are also added."
   (declare #.utils:*external-optimize-settings*)
   (loop for (source target) on pairs by #'cddr do
     (add-vertex graph source)
@@ -551,6 +561,7 @@
     (for-roots graph #'collect)))
 
 (defun for-in-out-edges (graph vertex fn)
+  "Apply a function `fn` to each edge to and from a vertex in a directed graph."
   (declare #.utils:*external-optimize-settings*)
   (declare (type (function (edge:edge) t) fn))
   (loop for edge in (in-edges graph vertex)
@@ -560,6 +571,7 @@
 (trivial-indent:define-indentation for-in-out-edges (4 4 &lambda))
 
 (defun vertex-equals (graph vertex1 vertex2)
+  "Check if two vertices are considered equal in a graph."
   (declare #.utils:*external-optimize-settings*)
   (funcall (the (function (t t) boolean)
                 (graph-vertex-equality-fn graph))
@@ -570,32 +582,39 @@
 (defvar *graph*)
 
 (defmacro with-graph* ((graph) &body body)
+  "Set the dynamic variable *graph* for use in dynamic builder functions."
   `(let ((*graph* ,graph))
      ,@body
      *graph*))
 
 (defun add-edge* (edge)
+  "Add an edge to *graph*."
   (declare #.utils:*external-optimize-settings*)
   (add-edge *graph* edge))
 
 (defun add-vertex* (vertex)
+  "Add a vertex to *graph*."
   (declare #.utils:*external-optimize-settings*)
   (add-vertex *graph* vertex))
 
 (defun add-edges-and-vertices* (&rest edges)
+  "Add a set of edges to *graph*, ensuring that their vertices are also added."
   (declare #.utils:*external-optimize-settings*)
   (apply #'add-edges-and-vertices (cons *graph* edges)))
 
 (defun add-edges-and-vertices-between* (&rest pairs)
+  "Convert a p-list into a set of edges and add all of these edges to *graph*, ensuring their vertices are also added."
   (declare #.utils:*external-optimize-settings*)
   (apply #'add-edges-and-vertices-between (cons *graph* pairs)))
 
 ;;; utils
 
 (defun pretty-print (graph &optional (stream t))
+  "Print the set of vertices and edges in a graph."
   (format stream "VERTICES: ~{~a~^, ~}~%EDGES: ~{~a~^, ~}~%" (vertices graph) (edges graph)))
 
 (defun graph-equals (graph1 graph2)
+  "Check if two graphs contain the same sets of edges and vertices."
   (declare #.utils:*external-optimize-settings*)
   (and (= (the fixnum (vertex-count graph1))
           (the fixnum (vertex-count graph2)))
