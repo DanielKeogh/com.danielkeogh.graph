@@ -537,7 +537,7 @@ Visit vertices in a directed graph recursively traversing each out edge of a giv
 Find the sets of strongly connected vertices in a directed graph.
 
 ```lisp
-(function (directed-graph))
+(strongly-connected-components directed-graph)
 ```
 Result is `(values hash-table count)`, where:
 
@@ -551,7 +551,7 @@ Also see [utilities](#connected-components-algorithm-utilities) for convience fu
 Find the sets of weakly connected vertices in a directed graph.
 
 ```lisp
-(function (directed-graph))
+(weakly-connected-components directed-graph)
 ```
 Result is `(values hash-table count)`, where:
 
@@ -570,17 +570,29 @@ Create a vector containing sub-graphs for given of connected components.
 * `components`: A hash-table where each key is a vertex and each value is a fixnum representing which group the vertex is in.
 * `component-count`: The number of unique groups in components.
 
-## Condensation Algorithms
+#### `condensate-vertices`
 
-### Condensate Vertices Algorithm
+```lisp
+(condensate-vertices graph components-fn)
+```
+
+* `graph` should be a directed graph
+* `components-fn` should be a `(function (graph) (values hash-table fixnum &optional))` such as `strongly-connected-components` or `weakly-connected-components`.
 
 This algorithm condensates either a graphs strongly or weakly connected sets of vertices into a new graph, where each vertex is a graph containing the condensed vertices and their connected edges.
-
-TODO: Decide whether or not condensation just belongs under (Connnected Components Algorithm Utilities)[#connected-component-algorithm-utilities]
 
 ## Graph Partition Algorithms
 
 ### Kerninghan-Lin Algorithm
+
+The [Kernighan-Lin Algorithm](https://en.wikipedia.org/wiki/Kernighan%E2%80%93Lin_algorithm) will split a graph into two partitions. It aims to minimize the cost of the edges between the two partitions in order to find two partitions that are mostly unconnected.
+
+```lisp
+(kernighan-lin-partition undirected-graph iterations edge-cost-fn)
+```
+* `graph`: an undirected graph
+* `iterations`: A fixnum that indicates the number of times to run the alforithm.
+* `edge-cost-fn`: A `(function (edge) (values fixnum &optional))` that calculates the cost of traversing a given edge.
 
 # History and inspiration
 

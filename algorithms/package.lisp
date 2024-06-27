@@ -5,7 +5,8 @@
   (:local-nicknames
    (#:utils #:com.danielkeogh.graph.utils)
    (#:edge #:com.danielkeogh.graph.edge)
-   (#:graph #:com.danielkeogh.graph))
+   (#:graph #:com.danielkeogh.graph)
+   (#:bidirectional #:com.danielkeogh.graph.bidirectional))
   (:export
    ;; search
    #:bidirectional-breadth-first-search

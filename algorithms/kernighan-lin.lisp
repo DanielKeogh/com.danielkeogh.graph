@@ -2,13 +2,17 @@
 
 (in-package :com.danielkeogh.graph.algorithms)
 
+(declaim (ftype (function (t fixnum (function (edge:edge) (values number &optional)))
+                          (values hash-table hash-table number &optional))
+                kernighan-lin-partition))
 (defun kernighan-lin-partition (graph iterations edge-cost-fn)
   (labels ((make-set () (make-hash-table :test (graph:graph-vertex-equality-fn graph))))
     (let ((vertex-set-a (make-set))
           (vertex-set-b (make-set))
-          (partition-size (floor (graph:vertex-count graph) 2)))
+          (partition-size (floor (the fixnum (graph:vertex-count graph)) 2)))
       ;; Initialize start partitions
       (let ((i 0))
+        (declare (type fixnum i))
         (graph:for-vertices graph
             (lambda (v)
               (if (< i partition-size)
@@ -21,7 +25,7 @@
             (unswapped-set-b (alexandria:copy-hash-table vertex-set-b
                                                          :test (graph:graph-vertex-equality-fn graph))))
 
-        (labels ((cost (edge) (funcall edge-cost-fn edge))
+        (labels ((cost (edge) (the number (funcall edge-cost-fn edge)))
                  (cut-cost (arr) (aref arr 2))
                  (find-edge (v1 v2)
                    (loop for edge in (graph:adjacent-edges graph v1)
@@ -35,6 +39,7 @@
                    (setf (gethash vertex-b set-a) t))
                  (get-cut-cost ()
                    (let ((cost 0))
+                     (declare (type number cost))
                      (graph:for-edges graph
                          (lambda (edge)
                            (edge:with-edge (source target) edge
@@ -44,6 +49,7 @@
                  (get-vertex-cost (vertex)
                    (let ((cost 0)
                          (vertex-is-in-a (gethash vertex vertex-set-a)))
+                     (declare (type number cost))
                      (dolist (edge (graph:adjacent-edges graph vertex))
                        (edge:with-edge (source target) edge
                          (let ((neighbor (if (eq source vertex) target source)))
@@ -55,6 +61,7 @@
                    (let ((swaps (list))
                          (min-cost most-positive-double-float)
                          (min-id -1))
+                     (declare (type number min-cost))
                      (labels ((single-swap ()
                                 (let ((max-gain most-negative-double-float)
                                       max-a max-b)
@@ -82,6 +89,7 @@
                        
                        (dotimes (i partition-size)
                          (let ((cost (single-swap)))
+                           (declare (type number cost))
                            (when (< cost min-cost)
                              (setf min-cost cost)
                              (setf min-id i)))))
