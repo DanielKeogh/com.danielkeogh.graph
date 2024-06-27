@@ -85,7 +85,6 @@
                                   (remhash max-b unswapped-set-b))
 
                                 (get-cut-cost)))
-
                        
                        (dotimes (i partition-size)
                          (let ((cost (single-swap)))
