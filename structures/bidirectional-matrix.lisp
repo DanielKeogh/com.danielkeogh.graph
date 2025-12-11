@@ -28,6 +28,7 @@
    #:in-edges
    #:vertex-count
    #:edge-count
+   #:clone
 
    ;; accessors
    #:graph-vertex-equality-fn
@@ -203,6 +204,17 @@
   (declare #.utils:*internal-optimize-settings*)
   (declare (type bidirectional-matrix-graph graph))
   (graph-edge-count graph))
+
+(declaim (ftype (function (bidirectional-matrix-graph)
+                          (values bidirectional-matrix-graph &optional))
+                clone))
+(defun clone (graph)
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type bidirectional-matrix-graph graph))
+  (let ((clone (make-graph (graph-vertex-count graph))))
+    (dolist (edge (edges graph))
+      (add-edge-between clone (edge:edge-source edge) (edge:edge-target edge)))
+    clone))
 
 ;; looping without malloc
 

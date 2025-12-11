@@ -2,8 +2,6 @@
 
 (in-package :com.danielkeogh.graph.algorithms)
 
-(declaim (ftype (function (t) (values hash-table fixnum &optional))
-                strongly-connected-components))
 (defun strongly-connected-components (graph)
   (declare #.utils:*internal-optimize-settings*)
   (let* ((dfs-time 0)

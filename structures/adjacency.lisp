@@ -30,6 +30,7 @@
    #:out-edges
    #:vertex-count
    #:edge-count
+   #:clone
 
    ;; accessors
    #:graph-vertex-equality-fn
@@ -242,6 +243,21 @@
   (declare (type adjacency-graph graph))
   (loop for vertex being the hash-keys of (graph-vertex-edges graph)
         collect vertex))
+
+(declaim (ftype (function (adjacency-graph)
+                          (values adjacency-graph &optional))
+                clone))
+(defun clone (graph)
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type adjacency-graph graph))
+  (let ((clone (make-graph
+                :allow-parallel-edges (graph-allow-parallel-edges graph)
+                :vertex-equality-fn (graph-vertex-equality-fn graph))))
+    (dolist (vertex (vertices graph))
+      (add-vertex clone vertex))
+    (dolist (edge (edges graph))
+      (add-edge-between clone (edge:edge-source edge) (edge:edge-target edge)))
+    clone))
 
 (declaim (ftype (function (adjacency-graph t)
                           (values list &optional))

@@ -2,16 +2,6 @@
 
 (in-package :com.danielkeogh.graph.algorithms)
 
-(declaim (ftype (function (t &key
-                             (:root-vertex t)
-                             (:queue-size fixnum)
-                             (:on-discover-vertex-fn (function (t)))
-                             (:on-examine-vertex-fn (function (t)))
-                             (:on-vertex-finished-fn (function (t)))
-                             (:on-gray-target-fn (function (edge:edge)))
-                             (:on-black-target-fn (function (edge:edge))))
-                          (values null &optional))
-                bidirectional-breadth-first-search))
 (defun bidirectional-breadth-first-search (graph
                                            &key
                                              root-vertex
@@ -21,7 +11,16 @@
                                              (on-vertex-finished-fn #'identity)
                                              (on-gray-target-fn #'identity)
                                              (on-black-target-fn #'identity))
-  (declare #.utils:*internal-optimize-settings*)
+  (declare #.utils:*internal-optimize-settings*
+           (type t root-vertex)
+           (type fixnum queue-size)
+           (type (function (t))
+                 on-discover-vertex-fn
+                 on-examine-vertex-fn
+                 on-vertex-finished-fn)
+           (type (function (edge:edge))
+                 on-gray-target-fn
+                 on-black-target-fn))
   (let ((queue (cl-speedy-queue:make-queue queue-size))
         (colors (make-hash-table :test (graph:graph-vertex-equality-fn graph))))
     (labels ((enqueue (vertex)

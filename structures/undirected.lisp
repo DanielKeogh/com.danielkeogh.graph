@@ -29,6 +29,7 @@
    #:adjacent-edges
    #:vertex-count
    #:edge-count
+   #:clone
 
    ;; accessors
    #:graph-vertex-equality-fn
@@ -297,4 +298,17 @@
   (declare (type undirected-graph graph))
   (utils:with-counter (cnt)
     (for-edges graph #'cnt)))
+
+(declaim (ftype (function (undirected-graph)
+                          (values undirected-graph &optional))
+                clone))
+(defun clone (graph)
+  (declare #.utils:*internal-optimize-settings*)
+  (declare (type undirected-graph graph))
+  (let ((clone (make-graph
+                :allow-parallel-edges (graph-allow-parallel-edges graph)
+                :vertex-equality-fn (graph-vertex-equality-fn graph))))
+    (dolist (edge (edges graph))
+      (add-edge-between clone (edge:edge-source edge) (edge:edge-target edge)))
+    clone))
 

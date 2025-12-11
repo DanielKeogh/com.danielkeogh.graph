@@ -2,8 +2,6 @@
 
 (in-package :com.danielkeogh.graph.algorithms)
 
-(declaim (ftype (function (t) (values hash-table fixnum &optional))
-                weakly-connected-components))
 (defun weakly-connected-components (graph)
   (declare #.utils:*internal-optimize-settings*)
   (let* ((current-component 0)

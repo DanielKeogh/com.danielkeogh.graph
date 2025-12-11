@@ -2,11 +2,11 @@
 
 (in-package :com.danielkeogh.graph.algorithms)
 
-(declaim (ftype (function (t hash-table fixnum)
-                          (values simple-array &optional))
-                connected-components->graphs))
 (defun connected-components->graphs (source-graph components component-count)
-  (declare #.utils:*internal-optimize-settings*)
+  (declare #.utils:*internal-optimize-settings*
+           (type t source-graph)
+           (type hash-table components)
+           (type fixnum component-count))
   (let ((graphs (make-array component-count)))
     (dotimes (i component-count)
       (setf (aref graphs i) (graph:make-bidirectional-graph)))

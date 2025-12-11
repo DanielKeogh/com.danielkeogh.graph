@@ -60,11 +60,13 @@
    ;; dynamic builders
    #:with-graph*
    #:add-edge*
+   #:add-edge-between*
    #:add-vertex*
    #:add-edges-and-vertices*
    #:add-edges-and-vertices-between*
 
    ;; utils
+   #:clone
    #:pretty-print
    #:graph-equals
 
@@ -151,6 +153,12 @@
 (defgeneric is-directed (graph)
   (declare #.utils:*external-optimize-settings*)
   (:documentation "Check if a graph is directed."))
+
+;;; utils
+
+(defgeneric clone (graph)
+  (declare #.utils:*external-optimize-settings*)
+  (:documentation "Clone a graph, copying edges and vertices."))
 
 ;;; unsupported
 
@@ -253,6 +261,10 @@
   (declare #.utils:*external-optimize-settings*)
   (adjacency:edge-count graph))
 
+(defmethod clone ((graph adjacency:adjacency-graph))
+  (declare #.utils:*external-optimize-settings*)
+  (adjacency:clone graph))
+
 ;; bidirectional
 
 (declaim (ftype (function * (values bidirectional:bidirectional-graph &optional))
@@ -330,10 +342,14 @@
   (declare #.utils:*external-optimize-settings*)
   (bidirectional:edge-count graph))
 
+(defmethod clone ((graph bidirectional:bidirectional-graph))
+  (declare #.utils:*external-optimize-settings*)
+  (bidirectional:clone graph))
+
 ;; bidirectional-matrix
 
-(declaim (ftype (function * (values bidirectional-matrix:bidirectional-matrix-graph
-                                    &optional))
+(declaim (ftype (function (fixnum) (values bidirectional-matrix:bidirectional-matrix-graph
+                                     &optional))
                 make-bidirectional-matrix-graph))
 (defun make-bidirectional-matrix-graph (vertex-count)
   "Create a graph with pre-populated vertices optimized for checking if a given edge exists. Vertices are represented as `fixnum` from 0 below `vertex-count`."
@@ -408,6 +424,10 @@
 (defmethod edge-count ((graph bidirectional-matrix:bidirectional-matrix-graph))
   (declare #.utils:*external-optimize-settings*)
   (bidirectional-matrix:edge-count graph))
+
+(defmethod clone ((graph bidirectional-matrix:bidirectional-matrix-graph))
+  (declare #.utils:*external-optimize-settings*)
+  (bidirectional-matrix:clone graph))
 
 ;; undirected
 
@@ -484,6 +504,10 @@
 (defmethod edge-count ((graph undirected:undirected-graph))
   (declare #.utils:*external-optimize-settings*)
   (undirected:edge-count graph))
+
+(defmethod clone ((graph undirected:undirected-graph))
+  (declare #.utils:*external-optimize-settings*)
+  (undirected:clone graph))
 
 ;; edge accessors
 
@@ -591,6 +615,11 @@
   "Add an edge to *graph*."
   (declare #.utils:*external-optimize-settings*)
   (add-edge *graph* edge))
+
+(defun add-edge-between* (vertex1 vertex2)
+  "Create a new edge between two vertices on *graph*. Will error if the edge refers to a vertex that is not yet added to the graph."
+  (declare #.utils:*external-optimize-settings*)
+  (add-edge-between *graph* vertex1 vertex2))
 
 (defun add-vertex* (vertex)
   "Add a vertex to *graph*."

@@ -19,8 +19,8 @@
 
 ;; Optimization
 
-(defvar *internal-optimize-settings* '(optimize (speed 3) (debug 0) (safety 0)))
-(defvar *external-optimize-settings* '(optimize (speed 3) (debug 0) (safety 3)))
+(defvar *internal-optimize-settings* '(optimize (speed 3) (debug 2) (safety 0)))
+(defvar *external-optimize-settings* '(optimize (speed 3) (debug 3) (safety 3)))
 
 ;; Collectors
 

@@ -9,18 +9,6 @@
   (edges (utils:required-argument "edges") :read-only t)
   (depth (utils:required-argument "depth") :read-only t))
 
-(declaim (ftype (function (t &key
-                             (:root-vertex t)
-                             (:process-all-vertices t)
-                             (:max-depth fixnum)
-                             (:on-start-vertex-fn (function (t)))
-                             (:on-tree-edge-fn (function (edge:edge)))
-                             (:on-discover-vertex-fn (function (t)))
-                             (:on-back-edge-fn (function (edge:edge)))
-                             (:on-forward-or-cross-edge-fn (function (edge:edge)))
-                             (:on-vertex-finished-fn (function (t))))
-                          (values null &optional))
-                depth-first-search))
 (defun depth-first-search (graph
                            &key
                              (root-vertex nil)
@@ -68,10 +56,10 @@
                                   (funcall on-discover-vertex-fn vertex))
 
                                  (:gray
-                                  (funcall on-back-edge-fn vertex))
+                                  (funcall on-back-edge-fn edge))
 
                                  (:black
-                                  (funcall on-forward-or-cross-edge-fn vertex)))))
+                                  (funcall on-forward-or-cross-edge-fn edge)))))
 
                            (funcall on-vertex-finished-fn u)))))
              (visit-all-vertices ()
