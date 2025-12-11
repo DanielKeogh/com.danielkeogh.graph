@@ -115,8 +115,8 @@
   (declare (type edge:edge edge))
   (let ((edges (gethash (edge:edge-source edge) (graph-vertex-out-edges graph))))
     (declare (type (or null list) edges))
-    (when edges
-      (find edge edges :test #'eql))))
+    (when (and edges (find edge edges :test #'eql))
+      t)))
 
 (declaim (ftype (function (bidirectional-graph t t)
                           (values boolean &optional))

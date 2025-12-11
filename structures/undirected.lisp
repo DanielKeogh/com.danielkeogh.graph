@@ -112,8 +112,8 @@
   (declare (type undirected-graph graph))
   (let ((edges (gethash (edge:edge-source edge) (graph-vertex-edges graph))))
     (declare (type (or list null) edges))
-    (when edges
-        (find edge edges :test #'eql))))
+    (when (and edges (find edge edges :test #'eql))
+      t)))
 
 (declaim (ftype (function (undirected-graph t t)
                           (values boolean &optional))
@@ -308,6 +308,8 @@
   (let ((clone (make-graph
                 :allow-parallel-edges (graph-allow-parallel-edges graph)
                 :vertex-equality-fn (graph-vertex-equality-fn graph))))
+    (dolist (vertex (vertices graph))
+      (add-vertex clone vertex))
     (dolist (edge (edges graph))
       (add-edge-between clone (edge:edge-source edge) (edge:edge-target edge)))
     clone))

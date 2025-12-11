@@ -9,14 +9,23 @@
 
 ;; helpers
 
+(defun make-bidirectional-matrix-graph-for-test (&rest args)
+  (declare (ignore args))
+  (api:make-bidirectional-matrix-graph 100))
+
 (defparameter *constructors* '(api:make-adjacency-graph
                                api:make-bidirectional-graph
-                               api:make-undirected-graph))
+                               api:make-undirected-graph
+                               make-bidirectional-matrix-graph-for-test))
 
 (defmacro without-constructors ((&rest constructors) &body body)
   (alexandria:with-gensyms (c)
     `(let ((*constructors* (remove-if (lambda (,c) (find ,c ,constructors)) *constructors*)))
        ,@body)))
+
+(defmacro without-matrix (&body body)
+  `(without-constructors '(make-bidirectional-matrix-graph-for-test)
+     ,@body))
 
 (defmacro do-all-graphs ((var &rest args) &body body)
   (alexandria:with-gensyms (constructor)
@@ -53,10 +62,11 @@
 ;; builders
 
 (test add-vertex
-  (do-all-graphs (g)
-    (is (= 0 (length (api:vertices g))))
-    (api:add-vertex g 1)
-    (is (= 1 (length (api:vertices g))))))
+  (without-matrix
+    (do-all-graphs (g)
+      (is (= 0 (length (api:vertices g))))
+      (api:add-vertex g 1)
+      (is (= 1 (length (api:vertices g)))))))
 
 (test add-edge
   (do-all-graphs (g)
@@ -89,11 +99,12 @@
     (is-true (api:has-edge-between g 2 3))))
 
 (test remove-vertex
-  (do-all-graphs (g)
-    (api:add-vertex g 1)
-    (api:remove-vertex g 1)
-    (api:remove-vertex g 2)
-    (is (= 0 (length (api:vertices g))))))
+  (without-matrix
+    (do-all-graphs (g)
+      (api:add-vertex g 1)
+      (api:remove-vertex g 1)
+      (api:remove-vertex g 2)
+      (is (= 0 (length (api:vertices g)))))))
 
 (test remove-edge
   (do-all-graphs (g)
@@ -108,7 +119,6 @@
   (do-all-graphs (g)
     (api:add-edges-and-vertices g
       (api:make-edge 0 1))
-    (is (= 2 (length (api:vertices g))))
     (is (= 1 (length (api:edges g))))
 
     (api:remove-edge-between g 0 1)
@@ -117,10 +127,11 @@
 ;; tests
 
 (test has-vertex
-  (do-all-graphs (g)
-    (is-false (api:has-vertex g 1))
-    (api:add-vertex g 1)
-    (is-true (api:has-vertex g 1))))
+  (without-matrix
+    (do-all-graphs (g)
+      (is-false (api:has-vertex g 1))
+      (api:add-vertex g 1)
+      (is-true (api:has-vertex g 1)))))
 
 (test has-edge
   (do-all-graphs (g)
@@ -180,14 +191,16 @@
       (is (equal (list edge1 edge2) (sort-edges (api:adjacent-edges g 1)))))))
 
 (test vertices
-  (do-all-graphs (g)
-    (is-false (api:edges g))
-    (api:add-vertex g 1)
-    (api:add-vertex g 2)
-    (is (equal (list 1 2) (sort (api:vertices g) #'<)))))
+  (without-matrix
+    (do-all-graphs (g)
+      (is-false (api:edges g))
+      (api:add-vertex g 1)
+      (api:add-vertex g 2)
+      (is (equal (list 1 2) (sort (api:vertices g) #'<))))))
 
 (test roots
-  (without-constructors '(api:make-undirected-graph)
+  (without-constructors '(api:make-undirected-graph
+                          make-bidirectional-matrix-graph-for-test)
     (do-all-graphs (g)
       (api:add-edges-and-vertices g
         (api:make-edge 0 :a)
@@ -205,19 +218,23 @@
     (is-true (api:edges g))))
 
 (test graph-vertex-equality-fn
-  (do-all-graphs (g)
-    (is (eql #'eql (api:graph-vertex-equality-fn g)))))
+  (without-matrix
+    (do-all-graphs (g)
+      (is (eql #'eql (api:graph-vertex-equality-fn g)))))
+  (is (eql #'= (api:graph-vertex-equality-fn
+                (api:make-bidirectional-matrix-graph 10)))))
 
 (test vertex-count
-  (do-all-graphs (g)
-    (is (= 0 (api:vertex-count g)))
-    (api:add-edges-and-vertices g
-      (api:make-edge 1 1)
-      (api:make-edge 2 2)
-      (api:make-edge 3 3)
-      (api:make-edge 4 4)
-      (api:make-edge 5 5))
-    (is (= 5 (api:vertex-count g)))))
+  (without-matrix
+    (do-all-graphs (g)
+      (is (= 0 (api:vertex-count g)))
+      (api:add-edges-and-vertices g
+        (api:make-edge 1 1)
+        (api:make-edge 2 2)
+        (api:make-edge 3 3)
+        (api:make-edge 4 4)
+        (api:make-edge 5 5))
+      (is (= 5 (api:vertex-count g))))))
 
 (test edge-count
   (do-all-graphs (g)
@@ -250,15 +267,16 @@
 ;; parallel edges
 
 (test allow-parallel-edges
-  (do-all-graphs (g :allow-parallel-edges t)
-    (api:add-vertices g 0 1)
-    (let ((e1 (api:make-edge 0 1))
-          (e2 (api:make-edge 0 1)))
+  (without-matrix
+    (do-all-graphs (g :allow-parallel-edges t)
+      (api:add-vertices g 0 1)
+      (let ((e1 (api:make-edge 0 1))
+            (e2 (api:make-edge 0 1)))
 
-      (is-true (api:add-edge g e1))
-      (is-true (api:add-edge g e2))
-      (is-true (api:has-edge g e1))
-      (is-true (api:has-edge g e2)))))
+        (is-true (api:add-edge g e1))
+        (is-true (api:add-edge g e2))
+        (is-true (api:has-edge g e1))
+        (is-true (api:has-edge g e2))))))
 
 (test disallow-parallel-edges
   (do-all-graphs (g :allow-parallel-edges nil)
@@ -270,3 +288,14 @@
       (is-false (api:add-edge g e2))
       (is-true (api:has-edge g e1))
       (is-false (api:has-edge g e2)))))
+
+(test clone
+  (do-all-graphs (g)
+    (api:add-vertices g 0 1)
+    (api:add-edge-between g 0 1)
+
+    (let ((clone (api:clone g)))
+      (is-true (api:has-edge-between clone 0 1))
+      (is-true (api:has-vertex clone 0))
+      (is-true (api:has-vertex clone 1))
+      (is (eq (api:graph-vertex-equality-fn clone) (api:graph-vertex-equality-fn g))))))

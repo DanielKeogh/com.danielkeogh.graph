@@ -85,7 +85,7 @@
 (defun has-edge-between (graph source target)
   (declare #.utils:*internal-optimize-settings*)
   (declare (type bidirectional-matrix-graph graph))
-  (aref (graph-edges graph) source target))
+  (when (aref (graph-edges graph) source target) t))
 
 (declaim (ftype (function (bidirectional-matrix-graph edge:edge)
                           (values boolean &optional))
@@ -93,7 +93,7 @@
 (defun has-edge (graph edge)
   (declare #.utils:*internal-optimize-settings*)
   (declare (type bidirectional-matrix-graph graph))
-  (has-edge-between graph (edge:edge-source edge) (edge:edge-target edge)))
+  (eql edge (aref (graph-edges graph) (edge:edge-source edge) (edge:edge-target edge))))
 
 (declaim (ftype (function (bidirectional-matrix-graph edge:edge)
                           (values (or null edge:edge) &optional))
@@ -104,11 +104,10 @@
   (declare (type edge:edge edge))
   (let ((source (edge:edge-source edge))
         (target (edge:edge-target edge)))
-    (when (aref (graph-edges graph) source target)
-      (error "Cannot add parallel edge ~S to bidirectional-matrix-graph" edge))
-    (setf (aref (graph-edges graph) source target) edge)
-    (incf (graph-edge-count graph))
-    edge))
+    (unless (aref (graph-edges graph) source target)
+      (setf (aref (graph-edges graph) source target) edge)
+      (incf (graph-edge-count graph))
+      edge)))
 
 (declaim (ftype (function (bidirectional-matrix-graph edge:edge)
                           (values (or null edge:edge) &optional))
