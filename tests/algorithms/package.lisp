@@ -7,4 +7,11 @@
                     (#:edge #:com.danielkeogh.graph.edge)
                     (#:utils #:com.danielkeogh.graph.utils))
   (:export #:run!
-           #:depth-first-search-tests))
+           #:bidirectional-breadth-first-search-tests
+           #:breadth-first-search-tests
+           #:condensate-vertices-tests
+           #:depth-first-search-tests
+           #:kernighan-lin-partition-tests
+           #:minimum-spanning-tree-tests
+           #:strongly-connected-components-tests
+           #:weakly-connected-components-tests))

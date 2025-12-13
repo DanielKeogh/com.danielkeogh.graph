@@ -2,10 +2,10 @@
 
 (in-package :com.danielkeogh.graph-tests.algorithms)
 
-(def-suite condensate-vertices
+(def-suite condensate-vertices-tests
   :description "Tests for condensate-vertices algorithm")
 
-(in-suite condensate-vertices)
+(in-suite condensate-vertices-tests)
 
 (test condensate-strongly-connected-vertices
   (let ((g (api:make-bidirectional-graph)))
