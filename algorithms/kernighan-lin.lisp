@@ -52,10 +52,10 @@
                      (declare (type number cost))
                      (dolist (edge (graph:adjacent-edges graph vertex))
                        (edge:with-edge (source target) edge
-                         (let ((neighbor (if (eq source vertex) target source)))
+                         (let ((neighbor (if (graph:vertex-equals graph source vertex) target source)))
                            (if (eq vertex-is-in-a (gethash neighbor vertex-set-a))
-                               (incf cost (cost edge))
-                               (decf cost (cost edge))))))
+                               (decf cost (cost edge))
+                               (incf cost (cost edge))))))
                      cost))
                  (do-all-swaps ()
                    (let ((swaps (list))
@@ -69,15 +69,14 @@
                                     (loop for vertex-b being the hash-keys of unswapped-set-b do
                                       (let* ((edge (find-edge vertex-a vertex-b))
                                              (edge-cost (if edge (cost edge) 0))
-                                             (gain (* edge-cost
-                                                      (+ (get-vertex-cost vertex-a)
-                                                         (get-vertex-cost vertex-b)
-                                                         -1))))
+                                             (gain (+ (get-vertex-cost vertex-a)
+                                                      (get-vertex-cost vertex-b)
+                                                      (* -2 edge-cost))))
                                         (when (> gain max-gain)
                                           (setf max-a vertex-a 
                                                 max-b vertex-b
                                                 max-gain gain)))))
-                                  (unless (or max-a max-b)
+                                  (unless (and max-a max-b)
                                     (error "Must find a swap"))
                                   (swap-vertices vertex-set-a max-a vertex-set-b max-b)
                                   (push (cons max-a max-b) swaps)

@@ -64,7 +64,7 @@
 
 ;; TODO: Fix this test?
 (test graph3
-  (let* ((graph  (api:make-undirected-graph))
+  (let* ((graph (api:make-undirected-graph))
          (costs (make-hash-table)))
     (labels ((e (source target weight)
                (let ((edge (api:make-edge source target)))
