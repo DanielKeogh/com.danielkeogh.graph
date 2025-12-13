@@ -8,7 +8,8 @@
   :components ((:module "tests"
                 :pathname "tests"
                 :components
-                ((:module "structures"
+                ((:file "package")
+                 (:module "structures"
                   :pathname "structures"
                   :components ((:file "package")
                                (:file "bidirectional")
