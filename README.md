@@ -80,9 +80,13 @@ A graph where each edge has a direction. That is an edge from A to B is not the 
 
 A directed acyclic graph (DAG) is a [Directed Graph](#directed-graph) where no edges form any cycles or loops.
 
-### Strongly connected
+### Strongly Connected
 
 Vertices are considered strongly connected when they are a part of a loop. That is, any given vertex in the set of strongly connected vertices can be used as a starting point to traverse to any other.
+
+### Weakly Connected
+
+Vertices are weakly connected if there is any path between them, ignoring the direction of edges.
 
 ### Clique
 
@@ -534,7 +538,7 @@ Visit vertices in a directed graph recursively traversing each out edge of a giv
 
 ### Strongly Connected Components Algorithm
 
-Find the sets of strongly connected vertices in a directed graph.
+Find the sets of [strongly connected](#strongly-connected) vertices in a directed graph.
 
 ```lisp
 (strongly-connected-components directed-graph)
@@ -548,7 +552,7 @@ Also see [utilities](#connected-components-algorithm-utilities) for convience fu
 
 ### Weakly Connected Components Algorithm
 
-Find the sets of weakly connected vertices in a directed graph.
+Find the sets of [weakly connected](#weakly-connected) vertices in a directed graph.
 
 ```lisp
 (weakly-connected-components directed-graph)
@@ -583,7 +587,9 @@ This algorithm condensates either a graphs strongly or weakly connected sets of 
 
 ## Graph Partition Algorithms
 
-### Kerninghan-Lin Algorithm
+### Kernighan-Lin Algorithm
+
+Kernighan-Lin is an algorithm that divides a graph into roughly two equal parts (bipartitioning) to minimize the number of edges between them.
 
 The [Kernighan-Lin Algorithm](https://en.wikipedia.org/wiki/Kernighan%E2%80%93Lin_algorithm) will split a graph into two partitions. It aims to minimize the cost of the edges between the two partitions in order to find two partitions that are mostly unconnected.
 
