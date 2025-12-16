@@ -17,6 +17,8 @@
                  (:module "algorithms"
                   :pathname "algorithms"
                   :components ((:file "package")
+                               ;; assignment
+                               (:file "hungarian-assignment")
                                ;; search
                                (:file "bidirectional-breadth-first-search")
                                (:file "breadth-first-search")

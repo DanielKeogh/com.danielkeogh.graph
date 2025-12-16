@@ -8,6 +8,8 @@
    (#:graph #:com.danielkeogh.graph)
    (#:bidirectional #:com.danielkeogh.graph.bidirectional))
   (:export
+   ;; assignment
+   #:hungarian-assignment
    ;; search
    #:bidirectional-breadth-first-search
    #:breadth-first-search
