@@ -600,6 +600,19 @@ The [Kernighan-Lin Algorithm](https://en.wikipedia.org/wiki/Kernighan%E2%80%93Li
 * `iterations`: A fixnum that indicates the number of times to run the alforithm.
 * `edge-cost-fn`: A `(function (edge) (values fixnum &optional))` that calculates the cost of traversing a given edge.
 
+## Topological Sort Algorithms
+
+A topological sort is an ordering of vertices of a [Directed Acyclic Graph](directed-acyclic-graph) that guarantees that prerequisites always appear first.
+
+### Topological Sort
+
+```lisp
+(topological-sort graph)
+```
+
+`error` will be thrown if any cycles are found.
+Otherwise result is an ordered `array` consisting of all vertices in the graph.
+
 # History and inspiration
 
 This library has largely been inspired by the library [QuikGraph](https://github.com/KeRNeLith/QuikGraph), with many ideas and algorithms ripped from it wholesale.
