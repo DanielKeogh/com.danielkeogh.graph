@@ -23,5 +23,7 @@
    #:condensate-strongly-connected-vertices
    ;; graph partition
    #:kernighan-lin-partition
-   ;; ??
-   #:minimum-spanning-tree))
+   ;; minimum spanning tree
+   #:minimum-spanning-tree
+   ;; topological sort
+   #:topological-sort))

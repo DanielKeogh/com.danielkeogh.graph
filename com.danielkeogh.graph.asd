@@ -35,5 +35,6 @@
                              ;; graph partition
                              (:file "kernighan-lin" :depends-on ("package"))
                              ;; minimum spanning tree
-                             (:file "minimum-spanning-tree" :depends-on ("package"
-                                                                         "bidirectional-breadth-first-search"))))))
+                             (:file "minimum-spanning-tree" :depends-on ("package" "bidirectional-breadth-first-search"))
+                             ;; toplogical-sort
+                             (:file "topological-sort" :depends-on ("package" "depth-first-search"))))))

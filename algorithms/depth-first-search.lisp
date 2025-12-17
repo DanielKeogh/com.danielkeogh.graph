@@ -20,7 +20,15 @@
                              (on-back-edge-fn #'identity)
                              (on-forward-or-cross-edge-fn #'identity)
                              (on-vertex-finished-fn #'identity))
-  (declare #.utils:*internal-optimize-settings*)
+  (declare #.utils:*internal-optimize-settings*
+           (type fixnum max-depth)
+           (type function
+                 on-start-vertex-fn
+                 on-tree-edge-fn
+                 on-discover-vertex-fn
+                 on-back-edge-fn
+                 on-forward-or-cross-edge-fn
+                 on-vertex-finished-fn))
   (let ((vertex-colors (make-hash-table :test (graph:graph-vertex-equality-fn graph))))
     (labels ((out-edges (vertex)
                (graph:out-edges graph vertex))
@@ -38,6 +46,7 @@
                            (declare (type fixnum depth))
                            (when (> depth max-depth)
                              (setf (gethash u vertex-colors) :black)
+                             (funcall on-vertex-finished-fn u)
                              (continue))
 
                            (loop while edges do
@@ -49,9 +58,9 @@
                                  (:white
                                   (funcall on-tree-edge-fn edge)
                                   (push (make-search-frame u edges depth) todo-stack)
-                                  (setf u vertex
-                                        edges (out-edges u)
-                                        (gethash u vertex-colors) :gray)
+                                  (setf u vertex)
+                                  (setf edges (out-edges u))
+                                  (setf (gethash u vertex-colors) :gray)
                                   (incf depth)
                                   (funcall on-discover-vertex-fn vertex))
 
@@ -61,6 +70,7 @@
                                  (:black
                                   (funcall on-forward-or-cross-edge-fn edge)))))
 
+                           (setf (gethash u vertex-colors) :black)
                            (funcall on-vertex-finished-fn u)))))
              (visit-all-vertices ()
                (loop for vertex in (graph:vertices graph)

@@ -30,5 +30,7 @@
                                (:file "condensate-vertices")
                                ;; graph partition
                                (:file "kernighan-lin")
-                               ;; ??
-                               (:file "minimum-spanning-tree")))))))
+                               ;; minimum spanning tree
+                               (:file "minimum-spanning-tree")
+                               ;; topological sort
+                               (:file "topological-sort")))))))

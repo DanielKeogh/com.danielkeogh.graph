@@ -53,5 +53,5 @@
         (is (equalp "1->2B 2B->3 3->4 4->5A 5A->6A 4->5 5->6 1->2A " tree-edge))
         (is (equalp "6A 5A 6 5 4 3 2B 2A 1 " vertex-finished))
         (is (equalp "1 2B 3 4 5A 6A 5 6 2A " discover-vertex))
-        (is (equalp "6A->5A 2A->3 " back-edge))
-        (is (equalp "" forward-or-cross-edge))))))
+        (is (equalp "6A->5A " back-edge))
+        (is (equalp "2A->3 " forward-or-cross-edge))))))
