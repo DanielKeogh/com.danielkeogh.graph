@@ -460,6 +460,19 @@ The `supported-by` slot describes the types that are supported by the method as 
 
 This library provides a collection of popular graph-traversing algorithms for your convenience.
 
+## Assignment Algorithms
+
+### Hungarian Algorithm
+
+This is a combinatorial optimization method to solve the assignment problem: efficiently matching agents to tasks to achieve the minimum total cost and ensuring each pair is assigned.
+
+```lisp
+(function (hungarian-assignment 
+    (costs (array fixnum 2))))
+```
+
+* `costs` is a two-dimensional array of `fixnum` where rows and columns represent agents and tasks, and each cell is the cost for the particular combination of agent and task.
+
 ## Search Algorithms
 
 ### Bidirectional Breadth First Search Algorithm
