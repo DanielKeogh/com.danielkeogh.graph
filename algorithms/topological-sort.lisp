@@ -6,7 +6,7 @@
   (let ((sorted-vertices (make-array (graph:vertex-count graph) :fill-pointer 0)))
     (labels ((on-back-edge (edge)
                (declare (ignore edge))
-               (error "Cannot do topological on graph including cycles."))
+               (error "Cannot do topological sort on graph including cycles."))
              (on-vertex-finished (vertex)
                (vector-push vertex sorted-vertices)))
       (depth-first-search graph
