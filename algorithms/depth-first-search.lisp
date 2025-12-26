@@ -50,11 +50,9 @@
                              (continue))
 
                            (loop while edges do
-                             (let* ((edge (first edges))
-                                    (vertex (graph:edge-target edge))
-                                    (color (or (gethash vertex vertex-colors) :white)))
-                               (setf edges (cdr edges))
-                               (case color
+                             (let* ((edge (pop edges))
+                                    (vertex (graph:edge-target edge)))
+                               (case (gethash vertex vertex-colors :white)
                                  (:white
                                   (funcall on-tree-edge-fn edge)
                                   (push (make-search-frame u edges depth) todo-stack)

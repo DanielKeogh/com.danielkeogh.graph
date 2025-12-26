@@ -26,6 +26,7 @@
                              (:file "bidirectional-breadth-first-search" :depends-on ("package"))
                              (:file "breadth-first-search" :depends-on ("package"))
                              (:file "depth-first-search" :depends-on ("package"))
+                             (:file "undirected-depth-first-search" :depends-on ("package"))
                              ;; connected components
                              (:file "strongly-connected-components" :depends-on ("package" "depth-first-search"))
                              (:file "weakly-connected-components" :depends-on ("package" "depth-first-search"))
@@ -37,4 +38,6 @@
                              ;; minimum spanning tree
                              (:file "minimum-spanning-tree" :depends-on ("package" "bidirectional-breadth-first-search"))
                              ;; toplogical-sort
-                             (:file "topological-sort" :depends-on ("package" "depth-first-search"))))))
+                             (:file "topological-sort" :depends-on ("package" "depth-first-search"))
+                             (:file "undirected-topological-sort" :depends-on ("package" "depth-first-search"))
+                             ))))

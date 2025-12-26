@@ -18,15 +18,11 @@
 (test topological-sort
   (let ((g (api:make-adjacency-graph)))
     (api:add-edges-and-vertices-between g
-                                        1 2
-                                        2 3
-                                        2 6
-                                        2 8
-                                        4 2
-                                        4 5
-                                        5 6
-                                        7 5
-                                        7 8)
+      1 2     2 3
+      2 6     2 8
+      4 2     4 5
+      5 6     7 5
+      7 8)
     (is (equalp #(7 4 5 1 2 3 6 8) (alg:topological-sort g))))
 
   (let ((g (api:make-adjacency-graph)))

@@ -11,6 +11,7 @@
            #:breadth-first-search-tests
            #:condensate-vertices-tests
            #:depth-first-search-tests
+           #:undirected-depth-first-search-tests
            #:kernighan-lin-partition-tests
            #:minimum-spanning-tree-tests
            #:strongly-connected-components-tests

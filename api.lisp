@@ -557,6 +557,9 @@
     (add-vertex graph target)
     (add-edge-between graph source target)))
 
+(trivial-indent:define-indentation add-edges-and-vertices-between (4 &rest 2))
+
+
 (defun vertices (graph)
   "Get all verticies in the graph as a list."
   (declare #.utils:*external-optimize-settings*)

@@ -14,6 +14,7 @@
    #:bidirectional-breadth-first-search
    #:breadth-first-search
    #:depth-first-search
+   #:undirected-depth-first-search
    ;; connected components
    #:strongly-connected-components
    #:weakly-connected-components
@@ -26,4 +27,5 @@
    ;; minimum spanning tree
    #:minimum-spanning-tree
    ;; topological sort
-   #:topological-sort))
+   #:topological-sort
+   #:undirected-topological-sort))

@@ -23,6 +23,7 @@
                                (:file "bidirectional-breadth-first-search")
                                (:file "breadth-first-search")
                                (:file "depth-first-search")
+                               (:file "undirected-depth-first-search")
                                ;; connected components
                                (:file "strongly-connected-components")
                                (:file "weakly-connected-components")
@@ -33,4 +34,5 @@
                                ;; minimum spanning tree
                                (:file "minimum-spanning-tree")
                                ;; topological sort
-                               (:file "topological-sort")))))))
+                               (:file "topological-sort")
+                               (:file "undirected-topological-sort")))))))
